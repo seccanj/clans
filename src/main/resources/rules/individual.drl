@@ -1,0 +1,28 @@
+package org.seccanj.clans
+ 
+import org.seccanj.clans.model.World;
+import org.seccanj.clans.model.ModelUtils
+import org.seccanj.clans.model.Position;
+import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.Direction.Directions;
+
+
+rule "Move north"
+	ruleflow-group "movement"
+    when
+        $individual : Individual(me == true, position.row >= 5, position.column >= 5, $position : position)
+        
+        $world : World()
+        $newPosition: Position() from ModelUtils.move( $position, Directions.north.d, 2 )
+    then
+        System.out.println("Moving north from "+$position.row+" to "+$newPosition.row);
+        
+        modify ( $world ) {
+        	moveEntity( $position, $newPosition )
+        }
+
+        modify ( $individual ) {
+        	moveTo( $newPosition )
+        }
+
+end
