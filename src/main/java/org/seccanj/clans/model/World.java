@@ -24,12 +24,20 @@ public class World {
 	}
 
 	public Entity getEntity(Position p) {
-		return map[p.row][p.column];
+		if (ModelUtils.inWorld(p.row, p.column)) {
+			return map[p.row][p.column];
+		} else {
+			return null;
+		}
 	}
 	
 	public void setEntity(Position p, Entity e) {
-		map[p.row][p.column] = e;
-		entities.add(e);
+		if (ModelUtils.inWorld(p.row, p.column)) {
+			map[p.row][p.column] = e;
+			entities.add(e);
+		} else {
+			throw new RuntimeException("Coordinates "+p.toString()+" are out of the world.");
+		}
 	}
 	
 	public boolean moveEntity(Position a, Position b) {
@@ -41,11 +49,13 @@ public class World {
 		
 		System.out.println("moveEntity "+e.toString()+" to "+p.toString());
 		
-		if (map[p.row][p.column] == null) {
-			map[p.row][p.column] = e;
-			e.moveTo(p);
-			
-			result = true;
+		if (ModelUtils.inWorld(p.row, p.column)) {
+			if (map[p.row][p.column] == null) {
+				map[p.row][p.column] = e;
+				e.moveTo(p);
+				
+				result = true;
+			}
 		}
 		
 		return result;
@@ -53,8 +63,50 @@ public class World {
 
 	public void removeEntity(Entity e) {
 		map[e.getPosition().row][e.getPosition().column] = null;
+		entities.remove(e);
 	}
 
+	public RelativeCell scanFirst(Position observer, Directions dir, double upToDistance) {
+		System.out.println("  Scanning...");
+		
+		RelativeCell result = null;
+
+		Directions prevDir = dir.getPrevious();
+		Directions nextDir = dir.getNext();
+		Directions lastDir = nextDir.getNext();
+		
+		for (int i=1; i<upToDistance; i++) {
+			Position prevPos = observer.clone().move(prevDir.d, i);
+			Position thisPos = observer.clone().move(dir.d, i);
+
+			for (int j=0; j<=upToDistance; j++) {
+				if (j < upToDistance) {
+					prevPos.move(nextDir.d, j);
+					Entity e = world.getEntity(prevPos);
+					if (e != null) {
+						prevPos.move(nextDir.d, j-1);
+						result = new RelativeCell(prevPos, e, nextDir.d, j);
+						break;
+					}
+				}
+				
+				if (result == null) {
+					thisPos.move(lastDir.d, j);
+					Entity e = world.getEntity(thisPos);
+					if (e != null) {
+						prevPos.move(lastDir.d, j-1);
+						result = new RelativeCell(prevPos, e, lastDir.d, j);
+						break;
+					}
+				}
+			}
+		}		
+		
+		System.out.println("     Found "+(result != null ? result.position.toString() : "nothing."));
+		
+		return result;
+	}
+	
 	public List<RelativeCell> scan(Position observer, Directions dir, double upToDistance) {
 		List<RelativeCell> result = new ArrayList<>();
 
@@ -89,7 +141,7 @@ public class World {
 	public List<Cell> getAdjacentCells(Position p) {
 		List<Cell> result = new ArrayList<>();
 		
-		List<Position> positions = ModelUtils.getAdjacentPositions(p);
+		List<Position> positions = ModelUtils.getAdjacentPositions2(p);
 		
 		for (Position q : positions) {
 			result.add(new Cell(q, map[q.row][q.column]));

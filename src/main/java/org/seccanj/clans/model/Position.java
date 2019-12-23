@@ -27,10 +27,26 @@ public class Position {
 	}
 	
 	public Position move(Direction d, double distance) {
-		System.out.println("move() to direction "+d.toString());
+		//System.out.println("move() to direction "+d.toString());
 		
 		row = (int)Math.round(row + d.y * distance);
 		column = (int)Math.round(column + d.x * distance);
+		
+		if (row >= Configuration.WORLD_MAX_ROWS) {
+			row = Configuration.WORLD_MAX_ROWS;
+		}
+		
+		if (row < 0) {
+			row = 0;
+		}
+		
+		if (column >= Configuration.WORLD_MAX_COLUMNS) {
+			column = Configuration.WORLD_MAX_COLUMNS;
+		}
+		
+		if (column < 0) {
+			column = 0;
+		}
 		
 		return this;
 	}

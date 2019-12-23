@@ -2,12 +2,9 @@ package org.seccanj.clans.model.entities;
 
 import java.util.Date;
 
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.model.BaseEntity;
-import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.Food;
+import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;
 
 public class Individual extends BaseEntity implements Food {
@@ -31,6 +28,7 @@ public class Individual extends BaseEntity implements Food {
 	public double health = 100;
 	public double energy;
 	public boolean me;
+	private RelativeCell target;
 
 	@Override
 	public double getEnergy() {
@@ -97,5 +95,13 @@ public class Individual extends BaseEntity implements Food {
         World.getWorld().executeRuleProcess("clans");
 
         me = false;
+	}
+
+	public RelativeCell getTarget() {
+		return target;
+	}
+
+	public void setTarget(RelativeCell target) {
+		this.target = target;
 	}
 }
