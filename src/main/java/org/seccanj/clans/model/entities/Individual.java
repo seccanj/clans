@@ -73,6 +73,15 @@ public class Individual extends BaseEntity implements Food {
 		this.energy = energy;
 	}
 
+	public void addEnergy(double energy) {
+		this.energy += energy;
+	}
+
+	public void eat(Food food) {
+		System.out.println("   --- Eating "+food.getEnergy());
+		addEnergy(food.getEnergy());
+	}
+	
 	@Override
 	public String toString() {
 		return getName();
@@ -82,25 +91,11 @@ public class Individual extends BaseEntity implements Food {
 	public void live() {
 		// TODO
 		System.out.println(toString() + " - Living... ("+position.row+", "+position.column+")");
-		
-        // load up the knowledge base
-        KieServices ks = KieServices.Factory.get();
-	    KieContainer kContainer = ks.getKieClasspathContainer();
-	    
-    	KieSession kSession = kContainer.newKieSession("ksession-rules");
-
-        // go !
-        kSession.insert(World.getWorld());
-        
-        for (Entity e : World.getWorld().entities) {
-   			kSession.insert(e);
-        }
         
         me = true;
         
-        kSession.startProcess("clans");
-        kSession.fireAllRules();
-        
+        World.getWorld().executeRuleProcess("clans");
+
         me = false;
 	}
 }

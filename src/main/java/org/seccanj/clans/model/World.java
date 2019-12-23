@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
 
@@ -48,6 +51,10 @@ public class World {
 		return result;
 	}
 
+	public void removeEntity(Entity e) {
+		map[e.getPosition().row][e.getPosition().column] = null;
+	}
+
 	public List<RelativeCell> scan(Position observer, Directions dir, double upToDistance) {
 		List<RelativeCell> result = new ArrayList<>();
 
@@ -89,6 +96,24 @@ public class World {
 		}
 		
 		return result;
+	}
+
+	public void executeRuleProcess(String ruleProcess) {
+        // load up the knowledge base
+        KieServices ks = KieServices.Factory.get();
+	    KieContainer kContainer = ks.getKieClasspathContainer();
+	    
+    	KieSession kSession = kContainer.newKieSession("ksession-rules");
+
+        // go !
+        kSession.insert(World.getWorld());
+        
+        for (Entity e : World.getWorld().entities) {
+   			kSession.insert(e);
+        }
+
+        kSession.startProcess(ruleProcess);
+        kSession.fireAllRules();
 	}
 	
 }

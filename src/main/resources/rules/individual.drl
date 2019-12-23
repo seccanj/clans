@@ -1,10 +1,13 @@
 package org.seccanj.clans
  
+import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.World;
 import org.seccanj.clans.model.ModelUtils
 import org.seccanj.clans.model.Position;
-import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.entities.Plant;
 
 
 rule "Move north"
@@ -14,6 +17,7 @@ rule "Move north"
         
         $world : World()
         $newPosition: Position() from ModelUtils.move( $position, Directions.north.d, 2 )
+        
     then
         System.out.println("Moving north from "+$position.row+" to "+$newPosition.row);
         
@@ -24,5 +28,31 @@ rule "Move north"
         modify ( $individual ) {
         	moveTo( $newPosition )
         }
+
+end
+
+rule "Eat plant"
+	ruleflow-group "movement"
+    when
+        $individual : Individual(me == true, $position : position)
+        
+        $adjacentPosition : Position() from ModelUtils.getAdjacentPositions2( $position )
+                
+        $plant : Plant( position.row == $adjacentPosition.row, position.column == $adjacentPosition.column, $plantPosition : position )
+        
+        $world : World()
+        
+    then
+        System.out.println("Eating plant in "+$plantPosition.row+", "+$plantPosition.column);
+        
+        modify ( $individual ) {
+        	eat( $plant )
+        }
+
+        modify ( $world ) {
+        	removeEntity( $plant )
+        }
+
+		delete ( $plant )
 
 end

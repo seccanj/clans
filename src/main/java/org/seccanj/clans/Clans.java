@@ -2,12 +2,6 @@ package org.seccanj.clans;
 
 import java.util.Date;
 
-/*
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
-*/
-
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.engine.Engine;
 import org.seccanj.clans.model.ModelUtils;
@@ -15,6 +9,7 @@ import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.World;
 import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Individual.Gender;
+import org.seccanj.clans.model.entities.Plant;
 
 /**
  * Clans
@@ -38,30 +33,19 @@ public class Clans {
 			world.setEntity(individual.position, individual);
 		}
 		
+		for (int i=0; i<Configuration.NUM_INITIAL_PLANTS; i++) {
+			Plant plant = new Plant();
+			plant.position = Position.getRandom();
+			plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
+			
+			world.setEntity(plant.position, plant);
+		}
+		
 		return world;
 	}
 	
     public static void main( String[] args ) {
         try {
-        	/*
-	        // load up the knowledge base
-	        KieServices ks = KieServices.Factory.get();
-		    KieContainer kContainer = ks.getKieClasspathContainer();
-		    
-	    	KieSession kSession = kContainer.newKieSession("ksession-rules");
-	
-	        // go !
-	        kSession.insert(new World());
-            for (int row = 0; row < 9; row++) {
-            	for (int column = 0; column < 9; column++) {
-           			kSession.insert(new Position(row, column));
-            	}
-            }
-            
-            kSession.startProcess("sudoku");
-            kSession.fireAllRules();
-            */
-        	
         	World world = createWorld();
         	Engine engine = new Engine(world);
         	

@@ -10,4 +10,5 @@ public class Configuration {
 	public static int WORLD_MAX_COLUMNS = 1000;	
 
 	public static double INDIVIDUAL_DEFAULT_ENERGY = 100;
+	public static double PLANT_DEFAULT_ENERGY = 10;
 }
