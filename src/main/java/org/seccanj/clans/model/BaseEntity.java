@@ -9,11 +9,12 @@ import com.google.gson.Gson;
 
 public abstract class BaseEntity implements Entity {
 
+	public EntityType entityType;
 	public Set<State> states = new HashSet<>();
 	public Position position;
-	private Direction direction;
-	private double maxSpeed = Configuration.INDIVIDUAL_DEFAULT_MAX_SPEED;
-	private double speed;
+	public Direction direction;
+	public double maxSpeed = Configuration.INDIVIDUAL_DEFAULT_MAX_SPEED;
+	public double speed;
 	public boolean lived;
 	public int totalActionPoints = Configuration.INDIVIDUAL_DEFAULT_ACTION_POINTS;
 	public int leftActionPoints = totalActionPoints;
@@ -90,5 +91,25 @@ public abstract class BaseEntity implements Entity {
 	public String toString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
+	}
+
+	public EntityType getEntityType() {
+		return entityType;
+	}
+
+	public String getEntityTypeName() {
+		return entityType.name();
+	}
+
+	public void setEntityType(EntityType entityType) {
+		this.entityType = entityType;
+	}
+
+	public int getLeftActionPoints() {
+		return leftActionPoints;
+	}
+
+	public void setLeftActionPoints(int leftActionPoints) {
+		this.leftActionPoints = leftActionPoints;
 	}
 }

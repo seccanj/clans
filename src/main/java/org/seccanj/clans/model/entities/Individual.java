@@ -5,6 +5,7 @@ import java.util.Date;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Direction;
+import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.RelativeCell;
@@ -33,6 +34,10 @@ public class Individual extends BaseEntity implements Food {
 	public boolean me;
 	private RelativeCell target;
 
+	public Individual() {
+		setEntityType(EntityType.individual);
+	}
+	
 	@Override
 	public double getEnergy() {
 		return energy;

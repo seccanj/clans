@@ -1,10 +1,16 @@
 package org.seccanj.clans.engine;
 
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
+import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.entities.Individual;
 
 public class Engine {
 
@@ -16,13 +22,33 @@ public class Engine {
 	
 	public void start() {
 		
-		System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn);
-		
+        // load up the knowledge base
+		KieServices kieServices = KieServices.Factory.get();
+		KieContainer kContainer = kieServices.getKieClasspathContainer();
+	    
+    	//KieSession kSession = kContainer.newKieSession("ksession-rules");
+    	KieSession kSession = kContainer.newKieSession("ksession-rules");
+
+        // go !
+        kSession.insert(World.getWorld());
+        
+        Set<FactHandle> individualHandles = new HashSet<>();
+        
+        for (Entity e : World.getWorld().entities) {
+        	individualHandles.add(kSession.insert(e));
+   			kSession.insert(new Cell(e.getPosition(), e));
+        }
+
 		while(true) {
+			System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn++);
+
+			/*
 			System.out.println("Number of plants: " +world.entities.stream()
 				.filter(d -> d.getClass().equals(Plant.class))
 				.count());
-			
+			*/
+
+			/*
 			Optional<Entity> e = world.entities.stream()
 				.filter(Entity::shouldLive)
 				.findFirst();
@@ -40,6 +66,21 @@ public class Engine {
 				
 				System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn);
 			}
+			*/
+			
+	        //kSession.startProcess("clans");
+	        kSession.fireAllRules();
+	        
+	        individualHandles.stream()
+	        	.forEach(f -> {
+	        		Entity e = (Entity)kSession.getObject(f);
+	        		
+	        		if (e instanceof Individual) {
+		        		((Individual)e).resetHasLived();
+		        		kSession.update(f, e, "leftActionPoints");
+	        		}
+	        	});
+		
 		}
 	}
 	

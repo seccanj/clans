@@ -1,169 +1,63 @@
-package org.seccanj.clans
- 
 import org.seccanj.clans.model.Entity;
+import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.ModelUtils
+import org.seccanj.clans.model.ModelUtils;
 import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.Direction;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.control.EndOfTurn;
 
-rule "Pick random direction"
-	ruleflow-group "search"
+
+rule "Test individual action"
     when
-        $individual : Individual(me == true, target == null, hasState("moving") == false, leftActionPoints >= 1, position.row >= 5, position.column >= 5, $position : position, $maxSpeed : maxSpeed);
+        $individual : Individual( leftActionPoints >= 1 )
         
         $world : World()
 
-        $newDirection: Direction() from $individual.pickRandomDirection();
-        
-        $newPosition: Position() from ModelUtils.move( $position, $newDirection, $maxSpeed );
-        
     then
-        System.out.println("Setting new direction from "+$position.toString()+": "+$newDirection.toString());
+        System.out.println("Test action for "+$individual.toString());
         
         modify ( $individual ) {
-        	addState( "moving" )
-        	setDirection( $newDirection )
         	useActionPoints( 1 )
-        }
+        };
 
 end
 
-rule "Find food"
-	ruleflow-group "search"
+rule "Individual end of turn"
     when
-        $individual : Individual(me == true, target == null, position.row >= 5, position.column >= 5, $position : position, $direction : direction)
+        $individual : Individual( leftActionPoints == 0 )
         
-        $world : World()
-        
-        $targetCell: RelativeCell() from $world.scanFirst( $position, $direction, 200 )
-        
+        not EndOfTurn( individual == $individual )
+
     then
-        System.out.println("Setting target "+$targetCell.position.toString());
-        
-        modify ( $individual ) {
-        	setTarget( $targetCell )
-        }
+        System.out.println("End of turn for "+$individual.toString());
+
+		insert(	new EndOfTurn( $individual ) );
 
 end
 
-rule "Keep moving"
-	ruleflow-group "movement"
+rule "Teardown"
     when
-        $individual : Individual(me == true, target == null, hasState("moving") == true, leftActionPoints >= 5, energy >= 1, position.row >= 5, position.column >= 5, $position : position, $maxSpeed : maxSpeed, $direction : direction)
+        $individual : Individual( health <= 0 )
+
+		$cell : Cell( entity == $individual )
         
         $world : World()
-        
-        $newPosition: Position() from ModelUtils.move( $position, $direction, $maxSpeed )
-        
+
     then
-        System.out.println("Keep moving from "+$position.toString()+" towards "+$direction.toString());
+        System.out.println("Removing dead individual " + $individual.toString());
         
         modify ( $world ) {
-        	moveEntity( $position, $newPosition )
-        }
+        	removeEntity( $individual )
+        };
 
-        modify ( $individual ) {
-        	moveTo( $newPosition )
-        	useActionPoints( 5 )
-        	useEnergy( 1 )
-        }
+        delete ( $cell );
+        
+        delete ( $individual );
 
 end
 
-rule "Move to target"
-	ruleflow-group "movement"
-    when
-        $individual : Individual(me == true, target != null, leftActionPoints >= 5, energy >= 1, position.row >= 5 && position.row != target.position.row, position.column >= 5 && position.column != target.position.column, $position : position, $targetCell : target, $maxSpeed : maxSpeed)
-        
-        $world : World()
-        $targetPosition : Position() from $targetCell.position
-
-        $newDirection: Direction() from ModelUtils.getDirection( $position, $targetPosition )
-
-        $newPosition: Position() from ModelUtils.move( $position, $newDirection, 1 )
-        
-    then
-        System.out.println("Moving towards target position "+$newPosition.toString()+" with direction "+$newDirection.toString());
-        
-        modify ( $world ) {
-        	moveEntity( $individual, $newPosition )
-        }
-
-        modify ( $individual ) {
-        	addState( "moving" )
-        	setDirection( $newDirection )
-        	moveTo( $newPosition )
-        	useActionPoints( 5 )
-        	useEnergy( 1 )
-        }
-
-end
-
-rule "Eat plant"
-	ruleflow-group "movement"
-    when
-        $individual : Individual(me == true, leftActionPoints >= 10, $position : position)
-        
-        $adjacentPosition : Position() from ModelUtils.getAdjacentPositions2( $position )
-                
-        $plant : Plant( position.row == $adjacentPosition.row, position.column == $adjacentPosition.column, $plantPosition : position )
-        
-        $world : World()
-        
-    then
-        System.out.println("Eating plant in "+$plantPosition.toString());
-        
-        modify ( $individual ) {
-        	eat( $plant )
-			addEnergy( $plant.getEnergy() )
-        	useActionPoints( 10 )
-        	removeState( "moving" )
-        	setTarget ( null )
-        }
-
-        modify ( $world ) {
-        	removeEntity( $plant )
-        }
-
-		delete ( $plant )
-
-end
-
-
-rule "Starvation"
-	ruleflow-group "movement"
-    when
-        $individual : Individual(me == true, energy <= 0)
-        
-        $world : World()
-        
-    then
-        System.out.println("   Starving...");
-        
-        modify ( $individual ) {
-        	decreaseHealth( 10 )
-        }
-
-end
-
-
-rule "Recovering"
-	ruleflow-group "movement"
-    when
-        $individual : Individual(me == true, health < 100, energy > 0)
-        
-        $world : World()
-        
-    then
-        System.out.println("   Recovering...");
-        
-        modify ( $individual ) {
-        	increaseHealth( 10 )
-        }
-
-end
