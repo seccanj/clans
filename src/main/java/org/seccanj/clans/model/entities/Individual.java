@@ -2,7 +2,10 @@ package org.seccanj.clans.model.entities;
 
 import java.util.Date;
 
+import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.BaseEntity;
+import org.seccanj.clans.model.Direction;
+import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;
@@ -25,8 +28,8 @@ public class Individual extends BaseEntity implements Food {
 	public Gender gender;
 	public String name;
 	public Date birth;
-	public double health = 100;
-	public double energy;
+	public double health = Configuration.INDIVIDUAL_DEFAULT_HEALTH;
+	public double energy = Configuration.INDIVIDUAL_DEFAULT_ENERGY;
 	public boolean me;
 	private RelativeCell target;
 
@@ -67,32 +70,45 @@ public class Individual extends BaseEntity implements Food {
 		this.health = health;
 	}
 
+	public void decreaseHealth(double delta) {
+		this.health -= delta;
+		System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
+	}
+
+	public void increaseHealth(double delta) {
+		this.health += delta;
+		System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
+	}
+
 	public void setEnergy(double energy) {
 		this.energy = energy;
 	}
 
 	public void addEnergy(double energy) {
 		this.energy += energy;
+		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
+	}
+
+	public void useEnergy(double energy) {
+		this.energy -= energy;
+		System.out.println("    --- Using energy: "+energy+". Energy left: "+this.energy);
 	}
 
 	public void eat(Food food) {
 		System.out.println("   --- Eating "+food.getEnergy());
-		addEnergy(food.getEnergy());
+	}
+
+	public Direction pickRandomDirection() {
+		return Directions.directions[(int)Math.floor(Math.random() * 6)].d;
 	}
 	
 	@Override
-	public String toString() {
-		return getName();
-	}
-
-	@Override
 	public void live() {
-		// TODO
-		System.out.println(toString() + " - Living... ("+position.row+", "+position.column+")");
-        
         me = true;
         
-        World.getWorld().executeRuleProcess("clans");
+		System.out.println(" - Living...: "+toString());
+
+		World.getWorld().executeRuleProcess("clans");
 
         me = false;
 	}

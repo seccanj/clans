@@ -101,5 +101,27 @@ public class ModelUtils {
 		
 		return sb.toString();
 	}
+
+	public static Directions getClosestDirection(Direction dir) {
+		if (dir.x < 0) {
+			if (dir.y < 0) {
+				return Directions.southwest;
+			} else {
+				return Directions.northwest;
+			}
+		} else if (dir.x == 0) {
+			if (dir.y < 0) {
+				return Directions.south;
+			} else {
+				return Directions.north;
+			}
+		} else {
+			if (dir.y < 0) {
+				return Directions.southeast;
+			} else {
+				return Directions.northeast;
+			}
+		}
+	}
 	
 }

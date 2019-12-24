@@ -27,7 +27,7 @@ public class Clans {
 			individual.birth = now;
 			individual.name = ModelUtils.getRandomName(individual);
 			individual.position = Position.getRandom();
-			individual.energy = Math.random() * Configuration.INDIVIDUAL_DEFAULT_ENERGY;
+			//individual.energy = Math.random() * Configuration.INDIVIDUAL_DEFAULT_ENERGY;
 			individual.gender = Gender.getRandom();
 			
 			world.setEntity(individual.position, individual);
@@ -36,7 +36,7 @@ public class Clans {
 		for (int i=0; i<Configuration.NUM_INITIAL_PLANTS; i++) {
 			Plant plant = new Plant();
 			plant.position = Position.getRandom();
-			plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
+			//plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
 			
 			world.setEntity(plant.position, plant);
 		}

@@ -18,6 +18,8 @@ public class World {
 	public Entity[][] map = new Entity[Configuration.WORLD_MAX_ROWS][Configuration.WORLD_MAX_COLUMNS];
 	
 	public Set<Entity> entities = new HashSet<Entity>();
+	
+	public long currentTurn = 0;
 
 	public static World getWorld() {
 		return world;
@@ -40,6 +42,14 @@ public class World {
 		}
 	}
 	
+	public boolean isFree(Position p) {
+		if (ModelUtils.inWorld(p.row, p.column)) {
+			return map[p.row][p.column] == null;
+		} else {
+			return false;
+		}
+	}
+
 	public boolean moveEntity(Position a, Position b) {
 		return moveEntity(getEntity(a), b);
 	}
@@ -66,8 +76,12 @@ public class World {
 		entities.remove(e);
 	}
 
+	public RelativeCell scanFirst(Position observer, Direction dir, double upToDistance) {
+		return scanFirst(observer, ModelUtils.getClosestDirection(dir), upToDistance);
+	}
+	
 	public RelativeCell scanFirst(Position observer, Directions dir, double upToDistance) {
-		System.out.println("  Scanning...");
+		System.out.println("  Scanning "+dir.name()+"...");
 		
 		RelativeCell result = null;
 
@@ -152,8 +166,8 @@ public class World {
 
 	public void executeRuleProcess(String ruleProcess) {
         // load up the knowledge base
-        KieServices ks = KieServices.Factory.get();
-	    KieContainer kContainer = ks.getKieClasspathContainer();
+		KieServices kieServices = KieServices.Factory.get();
+		KieContainer kContainer = kieServices.getKieClasspathContainer();
 	    
     	KieSession kSession = kContainer.newKieSession("ksession-rules");
 

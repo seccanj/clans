@@ -5,9 +5,9 @@ public interface Entity {
 	void moveTo(Position p);
 	Position getPosition();
 	
-	boolean shouldMove();
-	void setHasMoved();
-	void resetHasMoved();
+	boolean shouldLive();
+	void setHasLived();
+	void resetHasLived();
 	
 	void live();
 	

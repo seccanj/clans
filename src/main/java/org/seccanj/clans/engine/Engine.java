@@ -15,21 +15,30 @@ public class Engine {
 	}
 	
 	public void start() {
+		
+		System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn);
+		
 		while(true) {
-			System.out.println("  -- Number of plants: " +world.entities.stream()
+			System.out.println("Number of plants: " +world.entities.stream()
 				.filter(d -> d.getClass().equals(Plant.class))
 				.count());
 			
 			Optional<Entity> e = world.entities.stream()
-				.filter(Entity::shouldMove)
+				.filter(Entity::shouldLive)
 				.findFirst();
 			
 			if (e.isPresent()) {
-				e.get().live();
-				e.get().setHasMoved();
+				Entity en = e.get();
+
+				en.live();
+				en.setHasLived();
+				
 			} else {
 				world.entities.stream()
-					.forEach(f -> f.resetHasMoved());
+					.forEach(f -> f.resetHasLived());
+				world.currentTurn++;
+				
+				System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn);
 			}
 		}
 	}

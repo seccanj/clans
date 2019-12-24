@@ -20,8 +20,10 @@ public class Position {
 	public static Position getRandom() {
 		Position result = new Position();
 		
-		result.row = (int) Math.round(Math.random() * (Configuration.WORLD_MAX_ROWS - 1));
-		result.column = (int) Math.round(Math.random() * (Configuration.WORLD_MAX_COLUMNS - 1));
+		do {
+			result.row = (int) Math.round(Math.random() * (Configuration.WORLD_MAX_ROWS - 1));
+			result.column = (int) Math.round(Math.random() * (Configuration.WORLD_MAX_COLUMNS - 1));
+		} while (!World.getWorld().isFree(result));
 		
 		return result;
 	}
