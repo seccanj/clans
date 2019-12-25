@@ -76,8 +76,13 @@ public class Individual extends BaseEntity implements Food {
 	}
 
 	public void decreaseHealth(double delta) {
-		this.health -= delta;
-		System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
+		if (health >= delta) {
+			this.health -= delta;
+			System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
+		} else {
+			health = 0;
+			System.out.println("    --- Health is 0");
+		}
 	}
 
 	public void increaseHealth(double delta) {
@@ -94,9 +99,14 @@ public class Individual extends BaseEntity implements Food {
 		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
 	}
 
-	public void useEnergy(double energy) {
-		this.energy -= energy;
-		System.out.println("    --- Using energy: "+energy+". Energy left: "+this.energy);
+	public void useEnergy(double delta) {
+		if (energy >= delta) {
+			energy -= delta;
+			System.out.println("    --- Using energy: "+delta+". Energy left: "+energy);
+		} else {
+			energy = 0;
+			System.out.println("    --- Energy is 0");
+		}
 	}
 
 	public void eat(Food food) {

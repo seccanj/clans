@@ -7,6 +7,8 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.World;
@@ -15,6 +17,8 @@ import org.seccanj.clans.model.entities.Individual;
 public class Engine {
 
 	private World world;
+	
+	private KieSession kSession;
 	
 	public Engine(World world) {
 		this.world = world;
@@ -27,7 +31,7 @@ public class Engine {
 		KieContainer kContainer = kieServices.getKieClasspathContainer();
 	    
     	//KieSession kSession = kContainer.newKieSession("ksession-rules");
-    	KieSession kSession = kContainer.newKieSession("ksession-rules");
+    	kSession = kContainer.newKieSession("ksession-rules");
 
         // go !
         kSession.insert(World.getWorld());
@@ -80,8 +84,29 @@ public class Engine {
 		        		kSession.update(f, e, "leftActionPoints");
 	        		}
 	        	});
-		
+	        
+	        removeEndOfTurns();
+	        
+	        removeActionDones();
 		}
+	}
+
+	private void removeEndOfTurns() {
+        QueryResults results = kSession.getQueryResults( "End of turns" );
+        System.out.println( "we have " + results.size() + " End of turns" );
+
+        for ( QueryResultsRow row : results ) {
+        	kSession.delete(row.getFactHandle("$endOfTurn"));
+        }
+	}
+	
+	private void removeActionDones() {
+        QueryResults results = kSession.getQueryResults( "Action dones" );
+        System.out.println( "we have " + results.size() + " Action dones" );
+
+        for ( QueryResultsRow row : results ) {
+        	kSession.delete(row.getFactHandle("$actionDone"));
+        }
 	}
 	
 }

@@ -10,6 +10,7 @@ import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Plant;
 import org.seccanj.clans.model.control.EndOfTurn;
+import org.seccanj.clans.model.control.ActionDone;
 
 
 rule "Test individual action"
@@ -27,6 +28,25 @@ rule "Test individual action"
 
 end
 
+rule "Starvation"
+    when
+        $individual : Individual( energy < 10 )
+        
+        exists EndOfTurn( individual == $individual )
+        
+        not ActionDone( individual == $individual, actionType == "starvation" )
+
+    then
+        System.out.println("Starving "+$individual.toString());
+
+        modify ( $individual ) {
+        	decreaseHealth( 20 )
+        };
+
+		insert(	new ActionDone( $individual, "starvation" ) );
+
+end
+
 rule "Individual end of turn"
     when
         $individual : Individual( leftActionPoints == 0 )
@@ -35,6 +55,10 @@ rule "Individual end of turn"
 
     then
         System.out.println("End of turn for "+$individual.toString());
+
+        modify ( $individual ) {
+        	useEnergy( 1 )
+        };
 
 		insert(	new EndOfTurn( $individual ) );
 
@@ -59,5 +83,13 @@ rule "Teardown"
         
         delete ( $individual );
 
+end
+
+query "End of turns"
+    $endOfTurn : EndOfTurn()
+end
+
+query "Action dones"
+    $actionDone : ActionDone()
 end
 
