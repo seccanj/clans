@@ -32,7 +32,7 @@ public class Individual extends BaseEntity implements Food {
 	public double health = Configuration.INDIVIDUAL_DEFAULT_HEALTH;
 	public double energy = Configuration.INDIVIDUAL_DEFAULT_ENERGY;
 	public boolean me;
-	private RelativeCell target;
+	public RelativeCell target;
 
 	public Individual() {
 		setEntityType(EntityType.individual);

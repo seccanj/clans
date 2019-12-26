@@ -20,11 +20,6 @@ public abstract class BaseEntity implements Entity {
 	public int leftActionPoints = totalActionPoints;
 	
 	@Override
-	public void moveTo(Position p) {
-		this.position = p.clone();
-	}
-	
-	@Override
 	public Position getPosition() {
 		return position.clone();
 	}
@@ -112,4 +107,20 @@ public abstract class BaseEntity implements Entity {
 	public void setLeftActionPoints(int leftActionPoints) {
 		this.leftActionPoints = leftActionPoints;
 	}
+	
+	@Override
+	public void moveTo(Position p, int distance) {
+		direction = ModelUtils.getDirection(position, p);
+		move(distance);
+	}
+
+	public void move(Direction d, int distance) {
+		direction = d;
+		move(distance);
+	}
+	
+	public void move(int distance) {
+		position.move(direction, distance);
+	}
+	
 }

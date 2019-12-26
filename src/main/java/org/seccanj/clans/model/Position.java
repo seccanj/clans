@@ -58,6 +58,20 @@ public class Position {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Position)) {
+			return false;
+		}
+		
+		return row == ((Position)obj).row && column == ((Position)obj).column;
+	}
+
+	@Override
+	public int hashCode() {
+		return row * 10000000 + column;
+	}
+	
+	@Override
 	public String toString() {
 		return "["+row+", "+column+"]";
 	}

@@ -15,7 +15,7 @@ import org.seccanj.clans.model.control.ActionDone;
 
 rule "Test individual action"
     when
-        $individual : Individual( leftActionPoints >= 1 )
+        $individual : Individual( leftActionPoints >= 1, target == null )
         
         $world : World()
 
@@ -28,9 +28,91 @@ rule "Test individual action"
 
 end
 
+rule "Find food"
+    when
+        $individual : Individual( hasState("hungry"), target == null, $position : position )
+        
+        $world : World()
+        
+		$targetCell: RelativeCell() from $world.scanFirst( "plant", $position, Directions.north, 200 )
+		
+    then
+        System.out.println("Setting target for "+$individual.toString());
+        
+        modify ( $individual ) {
+        	setTarget( $targetCell )
+        };
+
+        modify ( $individual ) {
+        	addState("moving")
+        };
+
+end
+
+rule "Move to target"
+    when
+        $individual : Individual(leftActionPoints >= 5, hasState("moving"), target != null, $position : position, $target : target)
+
+        $newPosition : Position() from $target.position
+        
+    then
+        System.out.println("Moving to target ");
+
+        modify ( $individual ) {
+        	moveTo( $newPosition, 2 )
+        };
+
+        modify ( $individual ) {
+        	useActionPoints( 5 )
+        };
+		
+end
+
+rule "Reached target"
+    when
+        $individual : Individual(hasState("moving"), target != null, position.equals(target.position))
+
+    then
+        System.out.println("Reached target");
+
+        modify ( $individual ) {
+        	removeState( "moving" )
+        };
+
+end
+
+rule "Eat plant"
+    when
+        $individual : Individual($position : position)
+        
+        $adjacentPosition : Position() from ModelUtils.getAdjacentPositions2( $position )
+                
+        $plant : Plant( position.equals($adjacentPosition), $plantPosition : position )
+        
+        $world : World()
+        
+    then
+        System.out.println("Eating plant in "+$plantPosition.toString());
+        
+        modify ( $individual ) {
+        	eat( $plant )
+        }
+
+        modify ( $individual ) {
+        	addEnergy( $plant.energy )
+        }
+
+        modify ( $world ) {
+        	removeEntity( $plant )
+        }
+
+		delete ( $plant )
+
+end
+
 rule "Starvation"
     when
-        $individual : Individual( energy < 10 )
+        $individual : Individual( energy < 50 )
         
         exists EndOfTurn( individual == $individual )
         
@@ -40,10 +122,37 @@ rule "Starvation"
         System.out.println("Starving "+$individual.toString());
 
         modify ( $individual ) {
-        	decreaseHealth( 20 )
+        	decreaseHealth( 1 )
+        };
+
+        modify ( $individual ) {
+        	addState( "hungry" )
         };
 
 		insert(	new ActionDone( $individual, "starvation" ) );
+
+end
+
+rule "Recovering"
+    when
+        $individual : Individual( health < 100, energy >= 50 )
+        
+        exists EndOfTurn( individual == $individual )
+        
+        not ActionDone( individual == $individual, actionType == "recovering" )
+
+    then
+        System.out.println("Recovering "+$individual.toString());
+
+        modify ( $individual ) {
+        	increaseHealth( 1 )
+        };
+
+        modify ( $individual ) {
+        	removeState( "hungry" )
+        };
+
+		insert(	new ActionDone( $individual, "recovering" ) );
 
 end
 

@@ -62,7 +62,7 @@ public class World {
 		if (ModelUtils.inWorld(p.row, p.column)) {
 			if (map[p.row][p.column] == null) {
 				map[p.row][p.column] = e;
-				e.moveTo(p);
+				e.moveTo(p, 1);
 				
 				result = true;
 			}
@@ -77,10 +77,14 @@ public class World {
 	}
 
 	public RelativeCell scanFirst(Position observer, Direction dir, double upToDistance) {
-		return scanFirst(observer, ModelUtils.getClosestDirection(dir), upToDistance);
+		return scanFirst(null, observer, ModelUtils.getClosestDirection(dir), upToDistance);
 	}
 	
-	public RelativeCell scanFirst(Position observer, Directions dir, double upToDistance) {
+	public RelativeCell scanFirst(String entityType, Position observer, Direction dir, double upToDistance) {
+		return scanFirst(entityType, observer, ModelUtils.getClosestDirection(dir), upToDistance);
+	}
+	
+	public RelativeCell scanFirst(String entityType, Position observer, Directions dir, double upToDistance) {
 		System.out.println("  Scanning "+dir.name()+"...");
 		
 		RelativeCell result = null;
@@ -97,7 +101,7 @@ public class World {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
 					Entity e = world.getEntity(prevPos);
-					if (e != null) {
+					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(nextDir.d, j-1);
 						result = new RelativeCell(prevPos, e, nextDir.d, j);
 						break;
@@ -107,7 +111,7 @@ public class World {
 				if (result == null) {
 					thisPos.move(lastDir.d, j);
 					Entity e = world.getEntity(thisPos);
-					if (e != null) {
+					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(lastDir.d, j-1);
 						result = new RelativeCell(prevPos, e, lastDir.d, j);
 						break;
@@ -116,7 +120,7 @@ public class World {
 			}
 		}		
 		
-		System.out.println("     Found "+(result != null ? result.position.toString() : "nothing."));
+		System.out.println("     Found "+(result != null ? result.getPosition().toString() : "nothing."));
 		
 		return result;
 	}

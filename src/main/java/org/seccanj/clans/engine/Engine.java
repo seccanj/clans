@@ -30,7 +30,6 @@ public class Engine {
 		KieServices kieServices = KieServices.Factory.get();
 		KieContainer kContainer = kieServices.getKieClasspathContainer();
 	    
-    	//KieSession kSession = kContainer.newKieSession("ksession-rules");
     	kSession = kContainer.newKieSession("ksession-rules");
 
         // go !
@@ -46,33 +45,6 @@ public class Engine {
 		while(true) {
 			System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn++);
 
-			/*
-			System.out.println("Number of plants: " +world.entities.stream()
-				.filter(d -> d.getClass().equals(Plant.class))
-				.count());
-			*/
-
-			/*
-			Optional<Entity> e = world.entities.stream()
-				.filter(Entity::shouldLive)
-				.findFirst();
-			
-			if (e.isPresent()) {
-				Entity en = e.get();
-
-				en.live();
-				en.setHasLived();
-				
-			} else {
-				world.entities.stream()
-					.forEach(f -> f.resetHasLived());
-				world.currentTurn++;
-				
-				System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: "+world.currentTurn);
-			}
-			*/
-			
-	        //kSession.startProcess("clans");
 	        kSession.fireAllRules();
 	        
 	        individualHandles.stream()

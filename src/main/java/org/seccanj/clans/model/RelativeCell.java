@@ -6,7 +6,7 @@ public class RelativeCell extends Cell {
 	public double distance;
 
 	public RelativeCell(Cell c) {
-		super(c.position, c.entity);
+		super(c.getPosition(), c.getEntity());
 	}
 	
 	public RelativeCell(Cell cell, Direction direction, double distance) {
