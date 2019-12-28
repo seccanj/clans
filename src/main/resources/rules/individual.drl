@@ -177,8 +177,6 @@ rule "Teardown"
     when
         $individual : Individual( health <= 0 )
 
-		$cell : Cell( entity == $individual )
-        
         $world : World()
 
     then
@@ -188,10 +186,16 @@ rule "Teardown"
         	removeEntity( $individual )
         };
 
-        delete ( $cell );
-        
         delete ( $individual );
 
+end
+
+query "All Individuals"
+    $individual : Individual()
+end
+
+query "All Plants"
+    $plant : Plant()
 end
 
 query "End of turns"
