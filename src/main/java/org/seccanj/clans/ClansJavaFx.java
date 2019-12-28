@@ -136,9 +136,9 @@ public class ClansJavaFx extends Application {
 
 		for (int i = 0; i < Configuration.WORLD_MAX_ROWS; i++) {
 			for (int j = 0; j < Configuration.WORLD_MAX_COLUMNS; j++) {
-				double x = getX(i, j);
-				double y = getY(i, j);
-				strokeHexagon(gc, x, y);
+				double x = getFlatX(i, j);
+				double y = getFlatY(i, j);
+				drawHexagonFlat(gc, x, y);
 			}
 		}
 	}
@@ -162,9 +162,9 @@ public class ClansJavaFx extends Application {
 		gc.setStroke(COLOR_MAP_LINE);
 		gc.setLineWidth(1);
 
-		double x = getX(row, column);
-		double y = getY(row, column);
-		strokeHexagon(gc, x, y);
+		double x = getFlatX(row, column);
+		double y = getFlatY(row, column);
+		drawHexagonFlat(gc, x, y);
 	}
 
 	public void drawPlant(long row, long column) {
@@ -172,9 +172,9 @@ public class ClansJavaFx extends Application {
 		gc.setStroke(COLOR_MAP_LINE);
 		gc.setLineWidth(1);
 
-		double x = getX(row, column);
-		double y = getY(row, column);
-		strokeHexagon(gc, x, y);
+		double x = getFlatX(row, column);
+		double y = getFlatY(row, column);
+		drawHexagonFlat(gc, x, y);
 	}
 
 	public void drawIndividual(long row, long column) {
@@ -182,17 +182,26 @@ public class ClansJavaFx extends Application {
 		gc.setStroke(Color.DARKRED);
 		gc.setLineWidth(2);
 
-		double x = getX(row, column);
-		double y = getY(row, column);
-		strokeHexagon(gc, x, y);
+		double x = getFlatX(row, column);
+		double y = getFlatY(row, column);
+		drawHexagonFlat(gc, x, y);
 	}
 
-	private double getX(long row, long column) {
+	private double getPointyX(long row, long column) {
 		return column * height + row * halfHeight;
 	}
 
-	private double getY(long row, long column) {
+	private double getPointyY(long row, long column) {
 		return row * (edge + halfEdge);
+	}
+
+	private double getFlatX(long row, long column) {
+		return column * (edge + halfEdge);
+	}
+
+	private double getFlatY(long row, long column) {
+		long alternate = column % 2;
+		return row * height + alternate * halfHeight;
 	}
 
 	public void drawSprite(Sprite s) {
@@ -223,7 +232,7 @@ public class ClansJavaFx extends Application {
 	 * double[]{210, 210, 240, 240}, 4);
 	 */
 
-	private void strokeHexagon(GraphicsContext gc, double x, double y) {
+	private void drawHexagonPointy(GraphicsContext gc, double x, double y) {
 		double vertexX[] = { x, x + halfHeight, x + halfHeight, x, x - halfHeight, x - halfHeight };
 		double vertexY[] = { y, y - halfEdge, y - edge - halfEdge, y - doubleEdge, y - edge - halfEdge, y - halfEdge };
 
@@ -231,4 +240,11 @@ public class ClansJavaFx extends Application {
 		gc.fillPolygon(vertexX, vertexY, 6);
 	}
 
+	private void drawHexagonFlat(GraphicsContext gc, double x, double y) {
+		double vertexX[] = { x, x + edge, x + edge + halfEdge, x + edge, x, x - halfEdge };
+		double vertexY[] = { y, y, y - halfHeight, y - height, y - height, y - halfHeight };
+
+		gc.strokePolygon(vertexX, vertexY, 6);
+		gc.fillPolygon(vertexX, vertexY, 6);
+	}
 }
