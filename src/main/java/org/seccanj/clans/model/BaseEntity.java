@@ -13,6 +13,7 @@ public abstract class BaseEntity implements Entity {
 	public Set<State> states = new HashSet<>();
 	public Position position;
 	public Direction direction;
+	private long birthTurn;
 	public double maxSpeed = Configuration.INDIVIDUAL_DEFAULT_MAX_SPEED;
 	public double speed;
 	public boolean lived;
@@ -121,6 +122,18 @@ public abstract class BaseEntity implements Entity {
 	
 	public void move(int distance) {
 		position.move(direction, distance);
+	}
+
+	public long getBirthTurn() {
+		return birthTurn;
+	}
+
+	public void setBirthTurn(long birthTurn) {
+		this.birthTurn = birthTurn;
+	}
+	
+	public long getAge() {
+		return World.getWorld().currentTurn - birthTurn;
 	}
 	
 }

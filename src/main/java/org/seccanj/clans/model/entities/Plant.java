@@ -23,4 +23,9 @@ public class Plant extends BaseEntity implements Food {
 		// TODO
 		System.out.println("Plant - Living...");
 	}
+	
+	public boolean shouldSplit() {
+		return getAge() % 25 == 0;
+	}
+
 }

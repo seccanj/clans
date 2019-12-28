@@ -1,3 +1,4 @@
+import org.seccanj.clans.ClansJavaFx;
 import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.RelativeCell;
@@ -36,7 +37,7 @@ rule "Find food"
 
         $world : World()
         
-		$targetCell: RelativeCell() from $world.scanFirst( "plant", $position, $individual.pickRandomDirections(), 200 )
+		$targetCell: RelativeCell() from $world.scanFirst2( "plant", $position, 200 )
 		
     then
         System.out.println("Setting target for "+$individual.toString());

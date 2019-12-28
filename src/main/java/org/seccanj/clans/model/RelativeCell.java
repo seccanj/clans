@@ -5,6 +5,10 @@ public class RelativeCell extends Cell {
 	public Direction direction;
 	public double distance;
 
+	public RelativeCell() {
+		super();
+	}
+
 	public RelativeCell(Cell c) {
 		super(c.getPosition(), c.getEntity());
 	}
@@ -20,5 +24,6 @@ public class RelativeCell extends Cell {
 		this.direction = direction;
 		this.distance = distance;
 	}
+
 	
 }

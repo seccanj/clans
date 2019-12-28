@@ -49,6 +49,10 @@ public class EngineTask extends Task<List<Sprite>> {
 		for (QueryResultsRow row : allPlants) {
 			Plant e = (Plant) row.get("$plant");
 			result.add(new Sprite(e.position, SpriteType.plant));
+			
+			if (e.shouldSplit()) {
+				kSession.insert(world.createEntityNear("plant", e.getPosition()));
+			}
 		}
 
 		// Handle individuals

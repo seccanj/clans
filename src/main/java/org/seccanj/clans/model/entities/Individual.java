@@ -1,12 +1,10 @@
 package org.seccanj.clans.model.entities;
 
-import java.util.Date;
-
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Direction;
-import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;
@@ -28,7 +26,6 @@ public class Individual extends BaseEntity implements Food {
 	
 	public Gender gender;
 	public String name;
-	public Date birth;
 	public double health = Configuration.INDIVIDUAL_DEFAULT_HEALTH;
 	public double energy = Configuration.INDIVIDUAL_DEFAULT_ENERGY;
 	public boolean me;
@@ -57,14 +54,6 @@ public class Individual extends BaseEntity implements Food {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Date getBirth() {
-		return birth;
-	}
-
-	public void setBirth(Date birth) {
-		this.birth = birth;
 	}
 
 	public double getHealth() {

@@ -1,6 +1,5 @@
 package org.seccanj.clans;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,12 +12,7 @@ import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.engine.EngineService;
 import org.seccanj.clans.gui.Sprite;
 import org.seccanj.clans.model.Entity;
-import org.seccanj.clans.model.ModelUtils;
-import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.entities.Individual;
-import org.seccanj.clans.model.entities.Individual.Gender;
-import org.seccanj.clans.model.entities.Plant;
 
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
@@ -105,25 +99,12 @@ public class ClansJavaFx extends Application {
 	public static World createWorld() {
 		World world = World.getWorld();
 
-		Date now = new Date();
-
 		for (int i = 0; i < Configuration.NUM_INITIAL_INDIVIDUALS; i++) {
-			Individual individual = new Individual();
-			individual.birth = now;
-			individual.name = ModelUtils.getRandomName(individual);
-			individual.position = Position.getRandom();
-			// individual.energy = Math.random() * Configuration.INDIVIDUAL_DEFAULT_ENERGY;
-			individual.gender = Gender.getRandom();
-
-			world.setEntity(individual.position, individual);
+			world.createEntity("individual");
 		}
 
 		for (int i = 0; i < Configuration.NUM_INITIAL_PLANTS; i++) {
-			Plant plant = new Plant();
-			plant.position = Position.getRandom();
-			// plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
-
-			world.setEntity(plant.position, plant);
+			world.createEntity("plant");
 		}
 
 		return world;

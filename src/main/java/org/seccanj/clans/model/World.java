@@ -10,6 +10,9 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.entities.Individual.Gender;
+import org.seccanj.clans.model.entities.Plant;
 
 public class World {
 	
@@ -25,6 +28,54 @@ public class World {
 		return world;
 	}
 
+	public Entity createEntity(String entityType) {
+		return createEntityNear(entityType, Position.getRandom());
+	}
+	
+	public Entity createEntityNear(String entityType, Position position) {
+		Entity result = null;
+		
+		Position newPosition = new Position();
+		int trials = 0;
+		do {
+			newPosition.row = position.row + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
+			newPosition.column = position.column + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
+		} while (!World.getWorld().isFree(newPosition) && trials++ <= Configuration.NEAR_DISTANCE_SQUARE);
+		
+		if (trials < Configuration.NEAR_DISTANCE_SQUARE) {
+			switch (EntityType.valueOf(entityType)) {
+			case individual:
+				Individual individual = new Individual();
+				individual.setBirthTurn(currentTurn);
+				individual.name = ModelUtils.getRandomName(individual);
+				individual.position = newPosition;
+				// individual.energy = Math.random() * Configuration.INDIVIDUAL_DEFAULT_ENERGY;
+				individual.gender = Gender.getRandom();
+	
+				World.getWorld().setEntity(individual.position, individual);
+				
+				result = individual;
+				
+				break;
+			case plant:
+				Plant plant = new Plant();
+				plant.position = newPosition;
+				// plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
+				plant.setBirthTurn(currentTurn);
+	
+				World.getWorld().setEntity(plant.position, plant);
+				
+				result = plant;
+				
+				break;
+			default:
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	public Entity getEntity(Position p) {
 		if (ModelUtils.inWorld(p.row, p.column)) {
 			return map[p.row][p.column];
@@ -82,6 +133,37 @@ public class World {
 	
 	public RelativeCell scanFirst(String entityType, Position observer, Direction dir, double upToDistance) {
 		return scanFirst(entityType, observer, ModelUtils.getClosestDirection(dir), upToDistance);
+	}
+	
+	public RelativeCell scanFirst2(String entityType, Position observer, double upToDistance) {
+		System.out.println("  Scanning nearest entity...");
+		
+		RelativeCell result = new RelativeCell();
+		
+		try {
+			DistanceComparator d = new DistanceComparator(observer);
+			EntityType et = EntityType.valueOf(entityType);
+			
+			Entity nearest = entities.stream()
+				.filter(e -> e.getEntityType() == et)
+				.min(d)
+				.get();
+			
+			if (nearest != null) {
+				double distance = ModelUtils.getDistance(observer, nearest.getPosition());
+				
+				System.out.println("   Found nearest: Distance="+distance+" to: "+nearest.toString());
+				
+				if (distance <= upToDistance) {
+					result.setPosition(nearest.getPosition());
+					result.setEntity(nearest);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	public RelativeCell scanFirst(String entityType, Position observer, Directions dir, double upToDistance) {
