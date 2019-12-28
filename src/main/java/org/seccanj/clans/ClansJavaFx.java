@@ -33,13 +33,13 @@ import javafx.stage.Stage;
 public class ClansJavaFx extends Application {
 
 	public static final double SQUARE3 = Math.sqrt(3);
-	public static final double SCREEN_WIDTH = 1400;
-	public static final double SCREEN_HEIGHT = 1000;
+	public static final double SCREEN_WIDTH = 1500;
+	public static final double SCREEN_HEIGHT = 900;
 
 	public static Color COLOR_MAP_BACKGROUND = Color.WHITE;
 	public static Color COLOR_MAP_LINE = Color.BLUE;
 
-	public static double edge = 6;
+	public static double edge = 3;
 	public static double halfEdge = edge / 2;
 	public static double doubleEdge = edge * 2;
 	public static double height = edge * SQUARE3;

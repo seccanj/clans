@@ -30,7 +30,7 @@ public class EngineService extends Service<List<Sprite>> {
         
         task.setOnSucceeded((WorkerStateEvent event) -> {
             // another hook - callback lambda
-            System.out.println("In set on Succeded");
+            //System.out.println("In set on Succeded");
             
             List<Sprite> sprites = (List<Sprite>) event.getSource().getValue();
             gui.drawFrame(sprites);
@@ -38,7 +38,7 @@ public class EngineService extends Service<List<Sprite>> {
         
         task.setOnFailed((WorkerStateEvent event) -> {
             // another hook - callback lambda
-            System.out.println("In Failed");
+            //System.out.println("In Failed");
         });
         
         return task;
@@ -46,23 +46,23 @@ public class EngineService extends Service<List<Sprite>> {
 
     @Override
     protected void scheduled() {
-        System.out.println("In Scheduled");
+        //System.out.println("In Scheduled");
     	super.scheduled();
     }
     
     private void started() {
-        System.out.println("In Started");
+        //System.out.println("In Started");
 	}
     
     @Override
     protected void running() {
-        System.out.println("In Running");
+        //System.out.println("In Running");
     	super.running();
     }
     
     @Override
     protected void succeeded() {
-        System.out.println("In Succeded");
+        //System.out.println("In Succeded");
     	super.succeeded();
     }
 }

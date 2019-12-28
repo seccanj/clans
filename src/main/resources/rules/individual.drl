@@ -31,10 +31,12 @@ end
 rule "Find food"
     when
         $individual : Individual( hasState("hungry"), target == null, $position : position )
-        
+
+        not ActionDone( individual == $individual, actionType == "setTarget" )
+
         $world : World()
         
-		$targetCell: RelativeCell() from $world.scanFirst( "plant", $position, Directions.north, 200 )
+		$targetCell: RelativeCell() from $world.scanFirst( "plant", $position, $individual.pickRandomDirections(), 200 )
 		
     then
         System.out.println("Setting target for "+$individual.toString());
@@ -46,6 +48,8 @@ rule "Find food"
         modify ( $individual ) {
         	addState("moving")
         };
+
+		insert(	new ActionDone( $individual, "setTarget" ) );
 
 end
 
@@ -79,6 +83,10 @@ rule "Reached target"
         	removeState( "moving" )
         };
 
+        modify ( $individual ) {
+        	setTarget( null )
+        };
+
 end
 
 rule "Eat plant"
@@ -86,7 +94,7 @@ rule "Eat plant"
         $individual : Individual($position : position)
         
         $adjacentPosition : Position() from ModelUtils.getAdjacentPositions2( $position )
-                
+        
         $plant : Plant( position.equals($adjacentPosition), $plantPosition : position )
         
         $world : World()

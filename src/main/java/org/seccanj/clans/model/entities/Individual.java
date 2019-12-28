@@ -18,7 +18,7 @@ public class Individual extends BaseEntity implements Food {
 		female;
 		
 		public static Gender getRandom() {
-			if (Math.round(Math.random() * 2) == 0) {
+			if (Math.round(Math.random()) == 0) {
 				return male;
 			}
 			
@@ -76,7 +76,7 @@ public class Individual extends BaseEntity implements Food {
 	}
 
 	public void decreaseHealth(double delta) {
-		if (health >= delta) {
+		if (health > delta) {
 			this.health -= delta;
 			System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
 		} else {
@@ -115,6 +115,10 @@ public class Individual extends BaseEntity implements Food {
 
 	public Direction pickRandomDirection() {
 		return Directions.directions[(int)Math.floor(Math.random() * 6)].d;
+	}
+	
+	public Directions pickRandomDirections() {
+		return Directions.directions[(int)Math.floor(Math.random() * 6)];
 	}
 	
 	@Override

@@ -6,8 +6,8 @@ public class Configuration {
 	public static int NUM_INITIAL_PLANTS = 100;
 	public static int SIGHT_DISTANCE = 200;
 
-	public static int WORLD_MAX_ROWS = 300;
-	public static int WORLD_MAX_COLUMNS = 300;	
+	public static int WORLD_MAX_ROWS = 180;
+	public static int WORLD_MAX_COLUMNS = 240;	
 
 	public static double INDIVIDUAL_DEFAULT_HEALTH = 100;
 	public static double INDIVIDUAL_DEFAULT_ENERGY = 100;

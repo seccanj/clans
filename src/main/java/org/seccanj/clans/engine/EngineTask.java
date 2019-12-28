@@ -40,7 +40,10 @@ public class EngineTask extends Task<List<Sprite>> {
 		List<Sprite> result = new ArrayList<>();
 
 		QueryResults allPlants = kSession.getQueryResults("All Plants");
+		System.out.println("we have " + allPlants.size() + " Plants left");
+
 		QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
+		System.out.println("we have " + allIndividuals.size() + " Individuals left");
 
 		// Handle plants
 		for (QueryResultsRow row : allPlants) {
@@ -52,7 +55,8 @@ public class EngineTask extends Task<List<Sprite>> {
 		for (QueryResultsRow row : allIndividuals) {
 			Individual e = (Individual) row.get("$individual");
 			result.add(new Sprite(e.position, SpriteType.individual));
-
+			System.out.println("   [Individual left is: " + e.toString());
+			
 			e.resetHasLived();
 			kSession.update(row.getFactHandle("$individual"), e, "leftActionPoints");
 		}
