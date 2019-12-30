@@ -1,7 +1,8 @@
 package org.seccanj.clans;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.kie.api.KieServices;
@@ -10,18 +11,30 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.engine.EngineService;
+import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
 import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.World;
 
+import eu.hansolo.medusa.Gauge;
+import eu.hansolo.medusa.GaugeBuilder;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.Tile.SkinType;
+import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Application;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 public class ClansJavaFx extends Application {
@@ -29,6 +42,10 @@ public class ClansJavaFx extends Application {
 	public static final double SQUARE3 = Math.sqrt(3);
 	public static final double SCREEN_WIDTH = 1500;
 	public static final double SCREEN_HEIGHT = 900;
+	public static final double DASHBOARD_WIDTH = 160;
+	public static final double MAP_START_X = DASHBOARD_WIDTH + 5;
+	public static final double MAP_START_Y = 5;
+	public static final double TILE_SIZE = 150;
 
 	public static Color COLOR_MAP_BACKGROUND = Color.WHITE;
 	public static Color COLOR_MAP_LINE = Color.BLUE;
@@ -39,9 +56,14 @@ public class ClansJavaFx extends Application {
 	public static double height = edge * SQUARE3;
 	public static double halfHeight = edge * SQUARE3 / 2;
 
+    private static final Random RND = new Random();
 	private World world;
 	private KieSession kSession;
+
 	private GraphicsContext gc;
+    private Tile plantsGaugeTile;
+    private Gauge individualsGauge;
+    private Tile individualsGaugeTile;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -58,6 +80,41 @@ public class ClansJavaFx extends Application {
 		gc = canvas.getGraphicsContext2D();
 
 		root.getChildren().add(canvas);
+		
+        plantsGaugeTile = TileBuilder.create()
+                .prefSize(TILE_SIZE, TILE_SIZE)
+                .skinType(SkinType.SPARK_LINE)
+                .averagingPeriod(50)
+                .numberOfValuesForTrendCalculation(50)
+                .title("Plants")
+                .unit("num")
+                
+//                .gradientStops(new Stop(0, Tile.GREEN),
+//                               new Stop(0.5, Tile.YELLOW),
+//                               new Stop(1.0, Tile.RED))
+//                .strokeWithGradient(true)
+                
+                .build();
+        plantsGaugeTile.setValue(Configuration.NUM_INITIAL_PLANTS);
+        
+        individualsGauge = createGauge(Gauge.SkinType.DASHBOARD);
+        individualsGauge.setValue(0);
+        individualsGaugeTile  = TileBuilder.create()
+                                    .prefSize(TILE_SIZE, TILE_SIZE)
+                                    .skinType(SkinType.CUSTOM)
+                                    .title("Individuals")
+                                    .text("Percentage")
+                                    .graphic(individualsGauge)
+                                    .build();
+        
+        FlowGridPane pane = new FlowGridPane(2, 6, plantsGaugeTile, individualsGaugeTile);
+		pane.setHgap(5);
+		pane.setVgap(5);
+		pane.setPadding(new Insets(5));
+		pane.setBackground(new Background(new BackgroundFill(Tile.BACKGROUND.darker(), CornerRadii.EMPTY, Insets.EMPTY)));
+
+		root.getChildren().add(pane);
+		
 		primaryStage.setScene(new Scene(root));
 		primaryStage.show();
 
@@ -126,18 +183,25 @@ public class ClansJavaFx extends Application {
 
 	public void clearMap() {
 		gc.setFill(COLOR_MAP_BACKGROUND);
-		gc.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		gc.fillRect(offsetMapX(0), offsetMapY(0), SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
-	public void drawFrame(List<Sprite> sprites) {
+	public void drawFrame(GuiContext guiContext) {
 		clearMap();
 		drawMap();
 		
-        for (Sprite s : sprites) {
+        for (Sprite s : guiContext.getSprites()) {
         	drawSprite(s);
         }
+
+		updateGauges(guiContext);
 	}
 	
+	private void updateGauges(GuiContext guiContext) {
+		plantsGaugeTile.setValue(guiContext.getPlantsNum());
+        individualsGauge.setValue(guiContext.getIndividualsNum() / Configuration.NUM_INITIAL_INDIVIDUALS * 100);
+	}
+
 	public void clearHexagon(long row, long column) {
 		gc.setFill(COLOR_MAP_BACKGROUND);
 		gc.setStroke(COLOR_MAP_LINE);
@@ -185,6 +249,22 @@ public class ClansJavaFx extends Application {
 		return row * height + alternate * halfHeight;
 	}
 
+	private double[] offsetMapX(double[] x) {
+		return Arrays.stream(x).map(d -> MAP_START_X + d).toArray();
+	}
+	
+	private double[] offsetMapY(double[] y) {
+		return Arrays.stream(y).map(d -> MAP_START_Y + d).toArray();
+	}
+	
+	private double offsetMapX(double x) {
+		return MAP_START_X + x;
+	}
+	
+	private double offsetMapY(double y) {
+		return MAP_START_Y + y;
+	}
+	
 	public void drawSprite(Sprite s) {
 		switch (s.type) {
 		case individual:
@@ -214,18 +294,39 @@ public class ClansJavaFx extends Application {
 	 */
 
 	private void drawHexagonPointy(GraphicsContext gc, double x, double y) {
-		double vertexX[] = { x, x + halfHeight, x + halfHeight, x, x - halfHeight, x - halfHeight };
-		double vertexY[] = { y, y - halfEdge, y - edge - halfEdge, y - doubleEdge, y - edge - halfEdge, y - halfEdge };
-
+		double vertexX[] = offsetMapX(new double[]{ x, x + halfHeight, x + halfHeight, x, x - halfHeight, x - halfHeight });
+		double vertexY[] = offsetMapY(new double[]{ y, y - halfEdge, y - edge - halfEdge, y - doubleEdge, y - edge - halfEdge, y - halfEdge });
+		
 		gc.strokePolygon(vertexX, vertexY, 6);
 		gc.fillPolygon(vertexX, vertexY, 6);
 	}
 
 	private void drawHexagonFlat(GraphicsContext gc, double x, double y) {
-		double vertexX[] = { x, x + edge, x + edge + halfEdge, x + edge, x, x - halfEdge };
-		double vertexY[] = { y, y, y - halfHeight, y - height, y - height, y - halfHeight };
+		double vertexX[] = offsetMapX(new double[]{ x, x + edge, x + edge + halfEdge, x + edge, x, x - halfEdge });
+		double vertexY[] = offsetMapY(new double[]{ y, y, y - halfHeight, y - height, y - height, y - halfHeight });
 
 		gc.strokePolygon(vertexX, vertexY, 6);
 		gc.fillPolygon(vertexX, vertexY, 6);
 	}
+
+    private Gauge createGauge(final Gauge.SkinType TYPE) {
+        return GaugeBuilder.create()
+                           .skinType(TYPE)
+                           .prefSize(TILE_SIZE, TILE_SIZE)
+                           .animated(true)
+                           //.title("")
+                           .unit("\u00B0C")
+                           .valueColor(Tile.FOREGROUND)
+                           .titleColor(Tile.FOREGROUND)
+                           .unitColor(Tile.FOREGROUND)
+                           .barColor(Tile.BLUE)
+                           .needleColor(Tile.FOREGROUND)
+                           .barColor(Tile.BLUE)
+                           .barBackgroundColor(Tile.BACKGROUND.darker())
+                           .tickLabelColor(Tile.FOREGROUND)
+                           .majorTickMarkColor(Tile.FOREGROUND)
+                           .minorTickMarkColor(Tile.FOREGROUND)
+                           .mediumTickMarkColor(Tile.FOREGROUND)
+                           .build();
+    }
 }

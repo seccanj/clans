@@ -1,17 +1,15 @@
 package org.seccanj.clans.engine;
 
-import java.util.List;
-
 import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.ClansJavaFx;
-import org.seccanj.clans.gui.Sprite;
+import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.model.World;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 
-public class EngineService extends Service<List<Sprite>> {
+public class EngineService extends Service<GuiContext> {
 
     private World world;
 
@@ -25,15 +23,15 @@ public class EngineService extends Service<List<Sprite>> {
 		this.gui = gui;
     }
 
-    protected Task<List<Sprite>> createTask() {
+    protected Task<GuiContext> createTask() {
         EngineTask task = new EngineTask(world, kSession);
         
         task.setOnSucceeded((WorkerStateEvent event) -> {
             // another hook - callback lambda
             //System.out.println("In set on Succeded");
             
-            List<Sprite> sprites = (List<Sprite>) event.getSource().getValue();
-            gui.drawFrame(sprites);
+        	GuiContext guiContext = (GuiContext) event.getSource().getValue();
+            gui.drawFrame(guiContext);
         });
         
         task.setOnFailed((WorkerStateEvent event) -> {

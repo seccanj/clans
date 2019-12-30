@@ -6,6 +6,7 @@ import java.util.List;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
+import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
 import org.seccanj.clans.gui.Sprite.SpriteType;
 import org.seccanj.clans.model.World;
@@ -14,7 +15,7 @@ import org.seccanj.clans.model.entities.Plant;
 
 import javafx.concurrent.Task;
 
-public class EngineTask extends Task<List<Sprite>> {
+public class EngineTask extends Task<GuiContext> {
 
 	private World world;
 
@@ -26,10 +27,13 @@ public class EngineTask extends Task<List<Sprite>> {
 	}
 
 	@Override
-	protected List<Sprite> call() throws Exception {
+	protected GuiContext call() throws Exception {
 		System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: " + world.currentTurn++);
 
-		List<Sprite> result = new ArrayList<>();
+		GuiContext result = new GuiContext();
+		List<Sprite> sprites = new ArrayList<>();
+		
+		result.setSprites(sprites);
 		
 		try {
 			kSession.fireAllRules();
@@ -42,14 +46,16 @@ public class EngineTask extends Task<List<Sprite>> {
 	
 			QueryResults allPlants = kSession.getQueryResults("All Plants");
 			System.out.println("we have " + allPlants.size() + " Plants left");
+			result.setPlantsNum(allPlants.size());
 	
 			QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
 			System.out.println("we have " + allIndividuals.size() + " Individuals left");
-	
+			result.setIndividualsNum(allIndividuals.size());
+			
 			// Handle plants
 			for (QueryResultsRow row : allPlants) {
 				Plant e = (Plant) row.get("$plant");
-				result.add(new Sprite(e.position, SpriteType.plant));
+				sprites.add(new Sprite(e.position, SpriteType.plant));
 				
 				if (e.shouldSplit()) {
 					kSession.insert(world.createEntityNear("plant", e.getPosition()));
@@ -59,7 +65,7 @@ public class EngineTask extends Task<List<Sprite>> {
 			// Handle individuals
 			for (QueryResultsRow row : allIndividuals) {
 				Individual e = (Individual) row.get("$individual");
-				result.add(new Sprite(e.position, SpriteType.individual));
+				sprites.add(new Sprite(e.position, SpriteType.individual));
 				System.out.println("   [Individual left is: " + e.toString());
 				
 				e.resetActionPoints();
@@ -81,6 +87,7 @@ public class EngineTask extends Task<List<Sprite>> {
 			removeEndOfTurns();
 	
 			removeActionDones();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
