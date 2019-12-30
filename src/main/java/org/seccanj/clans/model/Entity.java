@@ -8,10 +8,5 @@ public interface Entity {
 	void moveTo(Position p, int distance);
 	Position getPosition();
 	
-	boolean shouldLive();
-	void setHasLived();
-	void resetHasLived();
-	
-	void live();
-	
+	void resetActionPoints();
 }

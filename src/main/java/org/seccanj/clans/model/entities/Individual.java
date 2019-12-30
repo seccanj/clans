@@ -1,13 +1,16 @@
 package org.seccanj.clans.model.entities;
 
-import org.seccanj.clans.configuration.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Direction;
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Food;
+import org.seccanj.clans.model.Gene;
+import org.seccanj.clans.model.Gene.GeneType;
 import org.seccanj.clans.model.RelativeCell;
-import org.seccanj.clans.model.World;
 
 public class Individual extends BaseEntity implements Food {
 
@@ -26,18 +29,33 @@ public class Individual extends BaseEntity implements Food {
 	
 	public Gender gender;
 	public String name;
-	public double health = Configuration.INDIVIDUAL_DEFAULT_HEALTH;
-	public double energy = Configuration.INDIVIDUAL_DEFAULT_ENERGY;
-	public boolean me;
 	public RelativeCell target;
 
 	public Individual() {
+		super(getDefaultDna());
 		setEntityType(EntityType.individual);
+	}
+
+	public Individual(Map<GeneType, Gene> dna) {
+		super(dna);
+		setEntityType(EntityType.individual);
+	}	
+	
+	@Override
+	protected void setCapabilities() {
+		setMaxSightDistance((int) dna.get(GeneType.sightDistance).getValue());
+		setMaxEnergy((int) dna.get(GeneType.maxEnergy).getValue());
+		setMaxHealth((int) dna.get(GeneType.maxHealth).getValue());
+		setMaxActionPoints((int) dna.get(GeneType.maxActionPoints).getValue());
+		setMaxSpeed((int) dna.get(GeneType.maxSpeed).getValue());
 	}
 	
 	@Override
-	public double getEnergy() {
-		return energy;
+	protected void initVitals() {
+		setSightDistance(getMaxSightDistance());
+		setEnergy(getMaxEnergy());
+		setHealth(getMaxHealth());
+		setActionPoints(getMaxActionPoints());
 	}
 	
 	public Gender getGender() {
@@ -56,48 +74,6 @@ public class Individual extends BaseEntity implements Food {
 		this.name = name;
 	}
 
-	public double getHealth() {
-		return health;
-	}
-
-	public void setHealth(double health) {
-		this.health = health;
-	}
-
-	public void decreaseHealth(double delta) {
-		if (health > delta) {
-			this.health -= delta;
-			System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
-		} else {
-			health = 0;
-			System.out.println("    --- Health is 0");
-		}
-	}
-
-	public void increaseHealth(double delta) {
-		this.health += delta;
-		System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
-	}
-
-	public void setEnergy(double energy) {
-		this.energy = energy;
-	}
-
-	public void addEnergy(double energy) {
-		this.energy += energy;
-		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
-	}
-
-	public void useEnergy(double delta) {
-		if (energy >= delta) {
-			energy -= delta;
-			System.out.println("    --- Using energy: "+delta+". Energy left: "+energy);
-		} else {
-			energy = 0;
-			System.out.println("    --- Energy is 0");
-		}
-	}
-
 	public void eat(Food food) {
 		System.out.println("   --- Eating "+food.getEnergy());
 	}
@@ -110,17 +86,6 @@ public class Individual extends BaseEntity implements Food {
 		return Directions.directions[(int)Math.floor(Math.random() * 6)];
 	}
 	
-	@Override
-	public void live() {
-        me = true;
-        
-		System.out.println(" - Living...: "+toString());
-
-		World.getWorld().executeRuleProcess("clans");
-
-        me = false;
-	}
-
 	public RelativeCell getTarget() {
 		return target;
 	}
@@ -128,4 +93,17 @@ public class Individual extends BaseEntity implements Food {
 	public void setTarget(RelativeCell target) {
 		this.target = target;
 	}
+	
+	public static Map<GeneType, Gene> getDefaultDna() {
+		Map<GeneType, Gene> result = new HashMap<>();
+		
+		result.put(GeneType.sightDistance, GeneType.sightDistance.getGene());
+		result.put(GeneType.maxEnergy, GeneType.maxEnergy.getGene());
+		result.put(GeneType.maxHealth, GeneType.maxHealth.getGene());
+		result.put(GeneType.maxActionPoints, GeneType.maxActionPoints.getGene());
+		result.put(GeneType.maxSpeed, GeneType.maxSpeed.getGene());
+
+		return result;
+	}
+	
 }

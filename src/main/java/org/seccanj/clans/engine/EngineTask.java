@@ -29,58 +29,62 @@ public class EngineTask extends Task<List<Sprite>> {
 	protected List<Sprite> call() throws Exception {
 		System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: " + world.currentTurn++);
 
-		kSession.fireAllRules();
-		/*
-		 * for (Entity e : World.getWorld().entities) { if (e instanceof Individual) {
-		 * clansJavaFx.drawIndividual(e.getPosition().row, e.getPosition().column); }
-		 * else if (e instanceof Plant) { clansJavaFx.drawPlant(e.getPosition().row,
-		 * e.getPosition().column); } }
-		 */
-
 		List<Sprite> result = new ArrayList<>();
-
-		QueryResults allPlants = kSession.getQueryResults("All Plants");
-		System.out.println("we have " + allPlants.size() + " Plants left");
-
-		QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
-		System.out.println("we have " + allIndividuals.size() + " Individuals left");
-
-		// Handle plants
-		for (QueryResultsRow row : allPlants) {
-			Plant e = (Plant) row.get("$plant");
-			result.add(new Sprite(e.position, SpriteType.plant));
-			
-			if (e.shouldSplit()) {
-				kSession.insert(world.createEntityNear("plant", e.getPosition()));
+		
+		try {
+			kSession.fireAllRules();
+			/*
+			 * for (Entity e : World.getWorld().entities) { if (e instanceof Individual) {
+			 * clansJavaFx.drawIndividual(e.getPosition().row, e.getPosition().column); }
+			 * else if (e instanceof Plant) { clansJavaFx.drawPlant(e.getPosition().row,
+			 * e.getPosition().column); } }
+			 */
+	
+			QueryResults allPlants = kSession.getQueryResults("All Plants");
+			System.out.println("we have " + allPlants.size() + " Plants left");
+	
+			QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
+			System.out.println("we have " + allIndividuals.size() + " Individuals left");
+	
+			// Handle plants
+			for (QueryResultsRow row : allPlants) {
+				Plant e = (Plant) row.get("$plant");
+				result.add(new Sprite(e.position, SpriteType.plant));
+				
+				if (e.shouldSplit()) {
+					kSession.insert(world.createEntityNear("plant", e.getPosition()));
+				}
 			}
+	
+			// Handle individuals
+			for (QueryResultsRow row : allIndividuals) {
+				Individual e = (Individual) row.get("$individual");
+				result.add(new Sprite(e.position, SpriteType.individual));
+				System.out.println("   [Individual left is: " + e.toString());
+				
+				e.resetActionPoints();
+				kSession.update(row.getFactHandle("$individual"), e, "actionPoints");
+			}
+	
+			/*
+			 * entityHandles.stream().forEach(f -> { Entity e = (Entity)
+			 * kSession.getObject(f);
+			 * 
+			 * if (e instanceof Individual) {
+			 * clansJavaFx.drawIndividual(e.getPosition().row, e.getPosition().column);
+			 * 
+			 * ((Individual) e).resetHasLived(); kSession.update(f, e, "leftActionPoints");
+			 * } else if (e instanceof Plant) { clansJavaFx.drawPlant(e.getPosition().row,
+			 * e.getPosition().column); } })
+			 */;
+	
+			removeEndOfTurns();
+	
+			removeActionDones();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		// Handle individuals
-		for (QueryResultsRow row : allIndividuals) {
-			Individual e = (Individual) row.get("$individual");
-			result.add(new Sprite(e.position, SpriteType.individual));
-			System.out.println("   [Individual left is: " + e.toString());
 			
-			e.resetHasLived();
-			kSession.update(row.getFactHandle("$individual"), e, "leftActionPoints");
-		}
-
-		/*
-		 * entityHandles.stream().forEach(f -> { Entity e = (Entity)
-		 * kSession.getObject(f);
-		 * 
-		 * if (e instanceof Individual) {
-		 * clansJavaFx.drawIndividual(e.getPosition().row, e.getPosition().column);
-		 * 
-		 * ((Individual) e).resetHasLived(); kSession.update(f, e, "leftActionPoints");
-		 * } else if (e instanceof Plant) { clansJavaFx.drawPlant(e.getPosition().row,
-		 * e.getPosition().column); } })
-		 */;
-
-		removeEndOfTurns();
-
-		removeActionDones();
-
 		return result;
 	}
 

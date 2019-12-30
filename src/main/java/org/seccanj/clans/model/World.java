@@ -46,6 +46,7 @@ public class World {
 			switch (EntityType.valueOf(entityType)) {
 			case individual:
 				Individual individual = new Individual();
+				individual.init();
 				individual.setBirthTurn(currentTurn);
 				individual.name = ModelUtils.getRandomName(individual);
 				individual.position = newPosition;
@@ -59,6 +60,7 @@ public class World {
 				break;
 			case plant:
 				Plant plant = new Plant();
+				plant.init();
 				plant.position = newPosition;
 				// plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
 				plant.setBirthTurn(currentTurn);
@@ -241,7 +243,7 @@ public class World {
 	public List<Cell> getAdjacentCells(Position p) {
 		List<Cell> result = new ArrayList<>();
 		
-		List<Position> positions = ModelUtils.getAdjacentPositions2(p);
+		List<Position> positions = p.getAdjacentPositions();
 		
 		for (Position q : positions) {
 			result.add(new Cell(q, map[q.row][q.column]));

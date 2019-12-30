@@ -1,5 +1,8 @@
 package org.seccanj.clans.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.seccanj.clans.configuration.Configuration;
 
 public class Position {
@@ -27,30 +30,94 @@ public class Position {
 		
 		return result;
 	}
+
+	public void setTo(Position p) {
+		row = p.row;
+		column = p.column;
+	}
 	
 	public Position move(Direction d, double distance) {
-		//System.out.println("move() to direction "+d.toString());
+		Position p = simulateMove(d, distance);
 		
-		row = (int)Math.round(row + d.y * distance);
-		column = (int)Math.round(column + d.x * distance);
-		
-		if (row >= Configuration.WORLD_MAX_ROWS) {
-			row = Configuration.WORLD_MAX_ROWS;
-		}
-		
-		if (row < 0) {
-			row = 0;
-		}
-		
-		if (column >= Configuration.WORLD_MAX_COLUMNS) {
-			column = Configuration.WORLD_MAX_COLUMNS;
-		}
-		
-		if (column < 0) {
-			column = 0;
-		}
+		row = p.row;
+		column = p.column;
 		
 		return this;
+	}
+	
+	public Position simulateMove(Direction d, double distance) {
+		Position p = new Position();
+
+		p.row = (int)Math.round(row + d.y * distance);
+		p.column = (int)Math.round(column + d.x * distance);
+		
+		if (p.row >= Configuration.WORLD_MAX_ROWS) {
+			p.row = Configuration.WORLD_MAX_ROWS;
+		}
+		
+		if (p.row < 0) {
+			p.row = 0;
+		}
+		
+		if (p.column >= Configuration.WORLD_MAX_COLUMNS) {
+			p.column = Configuration.WORLD_MAX_COLUMNS;
+		}
+		
+		if (p.column < 0) {
+			p.column = 0;
+		}
+		
+		return p;
+	}
+	
+	public List<Position> getAdjacentPositions() {
+		List<Position> result = new ArrayList<>();
+
+		long alternate = column % 2;
+
+		int upper = 0;
+		int lower = 0;
+
+		if (alternate == 0) {
+			lower = -1;
+		} else {
+			upper = -1;
+		}
+
+		result.add(new Position(row-1, column));
+		result.add(new Position(row + upper, column-1));
+		result.add(new Position(row + upper, column+1));
+		result.add(new Position(row + lower, column-1));
+		result.add(new Position(row + lower, column+1));
+		result.add(new Position(row+1, column));
+		
+		return result;
+	}
+	
+	public boolean isAdjacent(Position p) {
+		boolean result = false;
+		
+		long alternate = column % 2;
+
+		if (alternate == 0) {
+			if (p.row == row) {
+				return (p.column == column) || (p.column == column-1) || (p.column == column+1);
+			} else if (p.row == row-1) {
+				return p.column == column;
+			} else if (p.row == row+1) {
+				return (p.column == column) || (p.column == column-1) || (p.column == column+1);
+			}
+		} else {
+			if (p.row == row) {
+				return (p.column == column) || (p.column == column-1) || (p.column == column+1);
+			} else if (p.row == row-1) {
+				return (p.column == column) || (p.column == column-1) || (p.column == column+1);
+			} else if (p.row == row+1) {
+				return p.column == column;
+			}
+		}
+
+		return result;
 	}
 	
 	public Position clone() {

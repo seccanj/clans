@@ -1,49 +1,113 @@
 package org.seccanj.clans.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.seccanj.clans.configuration.Configuration;
+import org.seccanj.clans.model.Gene.GeneType;
 
 import com.google.gson.Gson;
 
 public abstract class BaseEntity implements Entity {
 
 	public EntityType entityType;
+	public Map<GeneType, Gene> dna = new HashMap<>();
+
 	public Set<State> states = new HashSet<>();
 	public Position position;
 	public Direction direction;
 	private long birthTurn;
-	public double maxSpeed = Configuration.INDIVIDUAL_DEFAULT_MAX_SPEED;
-	public double speed;
-	public boolean lived;
-	public int totalActionPoints = Configuration.INDIVIDUAL_DEFAULT_ACTION_POINTS;
-	public int leftActionPoints = totalActionPoints;
+
+	public int maxActionPoints;
+	private int actionPoints;
+	
+	public double maxEnergy;
+	public double energy;
+	
+	public double maxHealth;
+	public double health;
+	
+	public int maxSpeed;
+	public int speed;
+
+	public double maxSightDistance;
+	public double sightDistance;
+	
+	public BaseEntity(Map<GeneType, Gene> dna) {
+		this.dna = dna;
+	}
+
+	public void init() {
+		setCapabilities();
+		initVitals();
+	}
+	
+	protected abstract void setCapabilities();
+	
+	protected abstract void initVitals();
 	
 	@Override
 	public Position getPosition() {
 		return position.clone();
 	}
 	
-	@Override
-	public boolean shouldLive() {
-		return !lived;
+	public double getEnergy() {
+		return energy;
 	}
 	
-	public void setHasLived() {
-		lived = true;
+	public void setEnergy(double energy) {
+		this.energy = energy;
 	}
 
-	public void resetHasLived() {
-		lived = false;
-		leftActionPoints = totalActionPoints;
+	public void addEnergy(double energy) {
+		this.energy += energy;
+		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
+	}
+
+	public void useEnergy(double delta) {
+		if (energy >= delta) {
+			energy -= delta;
+			System.out.println("    --- Using energy: "+delta+". Energy left: "+energy);
+		} else {
+			energy = 0;
+			System.out.println("    --- Energy is 0");
+		}
+	}
+
+	public double getHealth() {
+		return health;
+	}
+
+	public void setHealth(double health) {
+		this.health = health;
+	}
+
+	public void decreaseHealth(double delta) {
+		if (health > delta) {
+			this.health -= delta;
+			System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
+		} else {
+			health = 0;
+			System.out.println("    --- Health is 0");
+		}
+	}
+
+	public void increaseHealth(double delta) {
+		this.health += delta;
+		System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
+	}
+
+	@Override
+	public void resetActionPoints() {
+		setActionPoints(maxActionPoints);
 	}
 
 	public void useActionPoints(int points) {
-		if (leftActionPoints >= points) {
-			leftActionPoints -= points;
+		if (getActionPoints() >= points) {
+			setActionPoints(getActionPoints() - points);
 		} else {
-			throw new RuntimeException("Insufficient action points ("+leftActionPoints+"). Can't consume "+points+" more points.");
+			throw new RuntimeException("Insufficient action points ("+getActionPoints()+"). Can't consume "+points+" more points.");
 		}
 	}
 	
@@ -67,32 +131,28 @@ public abstract class BaseEntity implements Entity {
 		states.remove(State.valueOf(state));
 	}
 
-	public double getMaxSpeed() {
+	public int getMaxSpeed() {
 		return maxSpeed;
 	}
 
-	public void setMaxSpeed(double maxSpeed) {
+	public void setMaxSpeed(int maxSpeed) {
 		this.maxSpeed = maxSpeed;
 	}
 
-	public double getSpeed() {
+	public int getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 	
 	@Override
-	public String toString() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
-
 	public EntityType getEntityType() {
 		return entityType;
 	}
 
+	@Override
 	public String getEntityTypeName() {
 		return entityType.name();
 	}
@@ -101,17 +161,15 @@ public abstract class BaseEntity implements Entity {
 		this.entityType = entityType;
 	}
 
-	public int getLeftActionPoints() {
-		return leftActionPoints;
-	}
-
-	public void setLeftActionPoints(int leftActionPoints) {
-		this.leftActionPoints = leftActionPoints;
-	}
-	
 	@Override
 	public void moveTo(Position p, int distance) {
 		direction = ModelUtils.getDirection(position, p);
+		double targetDistance = ModelUtils.getDistance(position, p);
+		
+		if (targetDistance > distance) {
+			distance = 1;
+		}
+		
 		move(distance);
 	}
 
@@ -121,7 +179,12 @@ public abstract class BaseEntity implements Entity {
 	}
 	
 	public void move(int distance) {
-		position.move(direction, distance);
+		Position p = position.simulateMove(direction, distance);
+		
+		if (World.getWorld().isFree(p)) {
+			position.setTo(p);
+			World.getWorld().moveEntity(this, position);
+		}
 	}
 
 	public long getBirthTurn() {
@@ -135,5 +198,79 @@ public abstract class BaseEntity implements Entity {
 	public long getAge() {
 		return World.getWorld().currentTurn - birthTurn;
 	}
+
+	public Map<GeneType, Gene> getDna() {
+		return dna;
+	}
+
+	public void setDna(Map<GeneType, Gene> dna) {
+		this.dna = dna;
+	}
+
+	public Set<State> getStates() {
+		return states;
+	}
+
+	public void setStates(Set<State> states) {
+		this.states = states;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
 	
+	public int getMaxActionPoints() {
+		return maxActionPoints;
+	}
+
+	public void setMaxActionPoints(int maxActionPoints) {
+		this.maxActionPoints = maxActionPoints;
+	}
+
+	public double getMaxEnergy() {
+		return maxEnergy;
+	}
+
+	public void setMaxEnergy(double maxEnergy) {
+		this.maxEnergy = maxEnergy;
+	}
+
+	public double getMaxHealth() {
+		return maxHealth;
+	}
+
+	public void setMaxHealth(double maxHealth) {
+		this.maxHealth = maxHealth;
+	}
+
+	public int getActionPoints() {
+		return actionPoints;
+	}
+
+	public void setActionPoints(int actionPoints) {
+		this.actionPoints = actionPoints;
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
+
+	public double getMaxSightDistance() {
+		return maxSightDistance;
+	}
+
+	public void setMaxSightDistance(double maxSightDistance) {
+		this.maxSightDistance = maxSightDistance;
+	}
+
+	public double getSightDistance() {
+		return sightDistance;
+	}
+
+	public void setSightDistance(double sightDistance) {
+		this.sightDistance = sightDistance;
+	}
+
 }

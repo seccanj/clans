@@ -14,14 +14,14 @@ import org.seccanj.clans.model.control.EndOfTurn;
 import org.seccanj.clans.model.control.ActionDone;
 
 
-rule "Test individual action"
+rule "Living"
     when
-        $individual : Individual( leftActionPoints >= 1, target == null )
+        $individual : Individual( actionPoints >= 1, target == null )
         
         $world : World()
 
     then
-        System.out.println("Test action for "+$individual.toString());
+        System.out.println("Living: "+$individual.toString());
         
         modify ( $individual ) {
         	useActionPoints( 1 )
@@ -37,7 +37,7 @@ rule "Find food"
 
         $world : World()
         
-		$targetCell: RelativeCell() from $world.scanFirst2( "plant", $position, 200 )
+		$targetCell: RelativeCell() from $world.scanFirst2( "plant", $position, $individual.sightDistance )
 		
     then
         System.out.println("Setting target for "+$individual.toString());
@@ -56,7 +56,7 @@ end
 
 rule "Move to target"
     when
-        $individual : Individual(leftActionPoints >= 5, hasState("moving"), target != null, $position : position, $target : target)
+        $individual : Individual(actionPoints >= 5, energy >= maxSpeed / 2, hasState("moving"), target != null, $position : position, $target : target)
 
         $newPosition : Position() from $target.position
         
@@ -64,18 +64,22 @@ rule "Move to target"
         System.out.println("Moving to target ");
 
         modify ( $individual ) {
-        	moveTo( $newPosition, 2 )
+        	moveTo( $newPosition, $individual.maxSpeed )
         };
 
         modify ( $individual ) {
         	useActionPoints( 5 )
         };
 		
+        modify ( $individual ) {
+        	useEnergy( $individual.maxSpeed / 2 )
+        };
+
 end
 
 rule "Reached target"
     when
-        $individual : Individual(hasState("moving"), target != null, position.equals(target.position))
+        $individual : Individual(hasState("moving"), target != null, position.isAdjacent(target.position))
 
     then
         System.out.println("Reached target");
@@ -94,7 +98,7 @@ rule "Eat plant"
     when
         $individual : Individual($position : position)
         
-        $adjacentPosition : Position() from ModelUtils.getAdjacentPositions2( $position )
+        $adjacentPosition : Position() from $position.getAdjacentPositions()
         
         $plant : Plant( position.equals($adjacentPosition), $plantPosition : position )
         
@@ -121,7 +125,7 @@ end
 
 rule "Starvation"
     when
-        $individual : Individual( energy < 50 )
+        $individual : Individual( energy <= maxEnergy / 2 )
         
         exists EndOfTurn( individual == $individual )
         
@@ -144,7 +148,7 @@ end
 
 rule "Recovering"
     when
-        $individual : Individual( health < 100, energy >= 50 )
+        $individual : Individual( health < maxHealth, energy >= maxEnergy / 2 )
         
         exists EndOfTurn( individual == $individual )
         
@@ -167,7 +171,7 @@ end
 
 rule "Individual end of turn"
     when
-        $individual : Individual( leftActionPoints == 0 )
+        $individual : Individual( actionPoints == 0 )
         
         not EndOfTurn( individual == $individual )
 

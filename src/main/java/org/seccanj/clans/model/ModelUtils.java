@@ -1,8 +1,5 @@
 package org.seccanj.clans.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.entities.Individual;
@@ -10,45 +7,6 @@ import org.seccanj.clans.model.entities.Individual;
 public class ModelUtils {
 
 	public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	
-	public static final int BORDERS[][] = {
-			{ -1, 0 },
-			{ -1, +1},
-			{ -1, 0 }
-	};
-	
-	public static List<Position> getAdjacentPositions(Position p) {
-		List<Position> result = new ArrayList<>();
-		
-		for (int i=0; i<BORDERS.length; i++) {
-			int row = p.row - 1 + i;
-			int deltas[] = BORDERS[i];
-			for (int j=0; j<deltas.length; j++) {
-				int column = p.column + deltas[j];
-				
-				if (inWorld(row, column) && !(row == p.row && column == p.column)) {
-					result.add(new Position(row, column));
-				}
-			}
-		}
-		
-		return result;
-	}
-	
-	public static List<Position> getAdjacentPositions2(Position p) {
-		List<Position> result = new ArrayList<>();
-		
-		for (int i=0; i<Directions.directions.length; i++) {
-			Position q = p.clone();
-			q.move(Directions.directions[i].d, 1);
-			
-			if (inWorld(q.row, q.column)) {
-				result.add(q);
-			}
-		}
-		
-		return result;
-	}
 	
 	public static double getDistance(Position a, Position b) {
 		return Math.sqrt(Math.pow(a.row - b.row, 2) + Math.pow(a.column - b.column, 2));
@@ -64,7 +22,7 @@ public class ModelUtils {
 	
 	public boolean isBetween(Direction d, Direction from, Direction to) {
 		// TODO
-		return true;
+		throw new UnsupportedOperationException();
 	}
 	
 	public static Direction addDirection(Direction a, Direction d) {
