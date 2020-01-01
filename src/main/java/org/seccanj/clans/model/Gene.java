@@ -1,5 +1,7 @@
 package org.seccanj.clans.model;
 
+import org.seccanj.clans.util.Utils;
+
 public class Gene {
 
 	public enum GeneType {
@@ -17,9 +19,23 @@ public class Gene {
 		}
 		
 		public Gene getGene() {
-			return new Gene(this.name(), this.defaultValue);
+			return new Gene(this.name(), mutate(this.defaultValue));
 		}
 		
+		Object mutate(Object value) {
+			if (value instanceof Integer) {
+				if (Math.round(Utils.RND.nextDouble()) == 0) {
+					long numericValue = (int) value;
+					numericValue = Math.round(numericValue + 
+						Math.round((1 - Utils.RND.nextDouble() * 2)) * (Utils.RND.nextDouble() * numericValue / 10));
+
+					return (int) numericValue;
+				}
+			}
+			
+			return value;
+		}
+
 		public Gene getGene(Object value) {
 			return new Gene(this.name(), value);
 		}
