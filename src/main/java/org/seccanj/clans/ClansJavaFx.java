@@ -2,7 +2,6 @@ package org.seccanj.clans;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import org.kie.api.KieServices;
@@ -55,7 +54,6 @@ public class ClansJavaFx extends Application {
 	public static double height = edge * SQUARE3;
 	public static double halfHeight = edge * SQUARE3 / 2;
 
-    private static final Random RND = new Random();
 	private World world;
 	private KieSession kSession;
 

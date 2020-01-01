@@ -1,11 +1,17 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.util;
+
+import java.util.Random;
 
 import org.seccanj.clans.configuration.Configuration;
+import org.seccanj.clans.model.BaseEntity;
+import org.seccanj.clans.model.Direction;
+import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.Direction.Directions;
 
-public class ModelUtils {
+public class Utils {
 
 	public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    public static final Random RND = new Random();
 	
 	public static double getDistance(Position a, Position b) {
 		return Math.sqrt(Math.pow(a.row - b.row, 2) + Math.pow(a.column - b.column, 2));
@@ -19,7 +25,7 @@ public class ModelUtils {
 		return p.clone().move(d, distance);
 	}
 	
-	public boolean isBetween(Direction d, Direction from, Direction to) {
+	public static boolean isBetween(Direction d, Direction from, Direction to) {
 		// TODO
 		throw new UnsupportedOperationException();
 	}

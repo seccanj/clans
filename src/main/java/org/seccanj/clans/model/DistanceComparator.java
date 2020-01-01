@@ -2,6 +2,8 @@ package org.seccanj.clans.model;
 
 import java.util.Comparator;
 
+import org.seccanj.clans.util.Utils;
+
 public class DistanceComparator implements Comparator<Entity>{
 
 	Position source;
@@ -17,8 +19,8 @@ public class DistanceComparator implements Comparator<Entity>{
 		
 		try {
 			result = Double.compare(
-					ModelUtils.getDistance(source, e1.getPosition()), 
-					ModelUtils.getDistance(source, e2.getPosition()));
+					Utils.getDistance(source, e1.getPosition()), 
+					Utils.getDistance(source, e2.getPosition()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -4,7 +4,7 @@ public class Gene {
 
 	public enum GeneType {
 		plantSplitPeriod(200),
-		sightDistance(100),
+		sightDistance(150),
 		maxEnergy(100),
 		maxHealth(100),
 		maxActionPoints(10),

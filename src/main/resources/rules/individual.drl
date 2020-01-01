@@ -3,7 +3,6 @@ import org.seccanj.clans.model.Entity;
 import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.ModelUtils;
 import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.Direction;
 import org.seccanj.clans.model.Food;
@@ -12,6 +11,7 @@ import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Plant;
 import org.seccanj.clans.model.control.EndOfTurn;
 import org.seccanj.clans.model.control.ActionDone;
+import org.seccanj.clans.util.Utils;
 
 
 rule "Living"

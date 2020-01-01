@@ -11,6 +11,7 @@ import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.entities.EntityFactory;
+import org.seccanj.clans.util.Utils;
 
 public class World {
 	
@@ -37,7 +38,7 @@ public class World {
 		
 		if (newPosition != null) {
 			result = EntityFactory.createEntity(EntityType.valueOf(entityType));
-			result.init(ModelUtils.getRandomName(result), newPosition, currentTurn);
+			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			World.getWorld().setEntity(newPosition, result);
 		}		
@@ -52,7 +53,7 @@ public class World {
 		
 		if (newPosition != null) {
 			result = EntityFactory.createEntity(EntityType.valueOf(entityType), parent1, parent2);
-			result.init(ModelUtils.getRandomName(result), newPosition, currentTurn);
+			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			World.getWorld().setEntity(newPosition, result);
 		}		
@@ -80,7 +81,7 @@ public class World {
 	}
 	
 	public Entity getEntity(Position p) {
-		if (ModelUtils.inWorld(p.row, p.column)) {
+		if (Utils.inWorld(p.row, p.column)) {
 			return map[p.row][p.column];
 		} else {
 			return null;
@@ -88,7 +89,7 @@ public class World {
 	}
 	
 	public void setEntity(Position p, Entity e) {
-		if (ModelUtils.inWorld(p.row, p.column)) {
+		if (Utils.inWorld(p.row, p.column)) {
 			map[p.row][p.column] = e;
 			entities.add(e);
 		} else {
@@ -97,7 +98,7 @@ public class World {
 	}
 	
 	public boolean isFree(Position p) {
-		if (ModelUtils.inWorld(p.row, p.column)) {
+		if (Utils.inWorld(p.row, p.column)) {
 			return map[p.row][p.column] == null;
 		} else {
 			return false;
@@ -113,10 +114,9 @@ public class World {
 		
 		System.out.println("moveEntity "+e.toString()+" to "+p.toString());
 		
-		if (ModelUtils.inWorld(p.row, p.column)) {
+		if (Utils.inWorld(p.row, p.column)) {
 			if (map[p.row][p.column] == null) {
 				map[p.row][p.column] = e;
-				e.moveTo(p, 1);
 				
 				result = true;
 			}
@@ -131,11 +131,11 @@ public class World {
 	}
 
 	public RelativeCell scanFirst(Position observer, Direction dir, double upToDistance) {
-		return scanFirst(null, observer, ModelUtils.getClosestDirection(dir), upToDistance);
+		return scanFirst(null, observer, Utils.getClosestDirection(dir), upToDistance);
 	}
 	
 	public RelativeCell scanFirst(String entityType, Position observer, Direction dir, double upToDistance) {
-		return scanFirst(entityType, observer, ModelUtils.getClosestDirection(dir), upToDistance);
+		return scanFirst(entityType, observer, Utils.getClosestDirection(dir), upToDistance);
 	}
 	
 	public RelativeCell scanFirst2(String entityType, Position observer, double upToDistance) {
@@ -153,7 +153,7 @@ public class World {
 				.get();
 			
 			if (nearest != null) {
-				double distance = ModelUtils.getDistance(observer, nearest.getPosition());
+				double distance = Utils.getDistance(observer, nearest.getPosition());
 				
 				System.out.println("   Found nearest: Distance="+distance+" to: "+nearest.toString());
 				

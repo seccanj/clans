@@ -3,6 +3,8 @@ package org.seccanj.clans.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.seccanj.clans.util.Utils;
+
 import com.google.gson.Gson;
 
 public abstract class BaseEntity implements Entity {
@@ -172,10 +174,10 @@ public abstract class BaseEntity implements Entity {
 
 	@Override
 	public void moveTo(Position p, int distance) {
-		direction = ModelUtils.getDirection(position, p);
-		double targetDistance = ModelUtils.getDistance(position, p);
+		direction = Utils.getDirection(position, p);
+		double targetDistance = Utils.getDistance(position, p);
 		
-		if (targetDistance > distance) {
+		if (targetDistance < distance) {
 			distance = 1;
 		}
 		
@@ -188,12 +190,21 @@ public abstract class BaseEntity implements Entity {
 	}
 	
 	public void move(int distance) {
-		Position p = position.simulateMove(direction, distance);
+		boolean moved = false;
+		int trials = 0;
 		
-		if (World.getWorld().isFree(p)) {
-			position.setTo(p);
-			World.getWorld().moveEntity(this, position);
-		}
+		do {
+			Position p = position.simulateMove(direction, distance);
+			
+			if (World.getWorld().isFree(p)) {
+				position.setTo(p);
+				World.getWorld().moveEntity(this, position);
+				moved = true;
+			} else {
+				direction = Direction.getRandom().d;
+				trials++;
+			}
+		} while (!moved || trials > 10);
 	}
 
 	public long getBirthTurn() {

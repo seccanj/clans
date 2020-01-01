@@ -1,17 +1,19 @@
 package org.seccanj.clans.model;
 
+import org.seccanj.clans.util.Utils;
+
 public class Direction {
 
 	public double x;
 	public double y;
 	
 	public enum Directions {
-		north(new Direction(-1, -1), 0),
-		northeast(new Direction(-1, 0), 1),
+		north(new Direction(-1, 0), 0),
+		northeast(new Direction(-1, 1), 1),
 		southeast(new Direction(0, 1), 2),
 		south(new Direction(1, 0), 3),
-		southwest(new Direction(1, -1), 4),
-		northwest(new Direction(0, -1), 5);
+		southwest(new Direction(0, -1), 4),
+		northwest(new Direction(-1, -1), 5);
 		
 		public static Directions[] directions = new Directions[] {
 			north,
@@ -93,6 +95,11 @@ public class Direction {
 		}
 		
 		return this;
+	}
+
+	public static Directions getRandom() {
+		int dir = (int) Math.floor(Utils.RND.nextDouble() * 6);
+		return Directions.directions[dir];
 	}
 	
 	@Override
