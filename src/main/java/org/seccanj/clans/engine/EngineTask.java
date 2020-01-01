@@ -52,6 +52,10 @@ public class EngineTask extends Task<GuiContext> {
 			System.out.println("we have " + allIndividuals.size() + " Individuals left");
 			result.setIndividualsNum(allIndividuals.size());
 			
+			if (allIndividuals.size() == 0) {
+				result.setEndOfLife(true);
+			}
+			
 			// Handle plants
 			for (QueryResultsRow row : allPlants) {
 				Plant e = (Plant) row.get("$plant");
@@ -66,7 +70,7 @@ public class EngineTask extends Task<GuiContext> {
 			for (QueryResultsRow row : allIndividuals) {
 				Individual e = (Individual) row.get("$individual");
 				sprites.add(new Sprite(e.position, SpriteType.individual));
-				System.out.println("   [Individual left is: " + e.toString());
+				//System.out.println("   [Individual left is: " + e.toString());
 				
 				e.resetActionPoints();
 				kSession.update(row.getFactHandle("$individual"), e, "actionPoints");

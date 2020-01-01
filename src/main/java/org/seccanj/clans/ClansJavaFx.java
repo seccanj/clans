@@ -10,6 +10,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.engine.EngineService;
+import org.seccanj.clans.gui.FrameRate;
 import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
 import org.seccanj.clans.model.Entity;
@@ -56,11 +57,14 @@ public class ClansJavaFx extends Application {
 
 	private World world;
 	private KieSession kSession;
+	private FrameRate frameRate;
 
 	private GraphicsContext gc;
     private Tile plantsGaugeTile;
     private Gauge individualsGauge;
     private Tile individualsGaugeTile;
+    private Gauge simpleDigitalGauge;
+    private Tile simpleDigitalGaugeTile;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -106,7 +110,18 @@ public class ClansJavaFx extends Application {
                                     .graphic(individualsGauge)
                                     .build();
         
-        FlowGridPane pane = new FlowGridPane(2, 6, plantsGaugeTile, individualsGaugeTile);
+        simpleDigitalGauge = createGauge(Gauge.SkinType.SIMPLE_DIGITAL);
+        simpleDigitalGauge.setValue(0);
+        simpleDigitalGaugeTile  = TileBuilder.create()
+                .prefSize(TILE_SIZE, TILE_SIZE)
+                .skinType(SkinType.CUSTOM)
+                .maxValue(30)
+                .title("Frame Rate")
+                .text("FPS")
+                .graphic(simpleDigitalGauge)
+                .build();
+
+        FlowGridPane pane = new FlowGridPane(2, 6, plantsGaugeTile, individualsGaugeTile, simpleDigitalGaugeTile);
 		pane.setHgap(5);
 		pane.setVgap(5);
 		pane.setPadding(new Insets(5));
@@ -146,9 +161,18 @@ public class ClansJavaFx extends Application {
                 }
                 */
                 
-                service.restart();
+                GuiContext guiContext = (GuiContext) t.getSource().getValue();
+                
+                if (!guiContext.isEndOfLife()) {
+                	service.restart();
+                } else {
+                	System.out.println("End of (non vegetal) life.");
+                }
             }
         });
+
+        frameRate = new FrameRate();
+
         service.start();
 	}
 
@@ -193,12 +217,15 @@ public class ClansJavaFx extends Application {
         	drawSprite(s);
         }
 
-		updateGauges(guiContext);
+    	frameRate.newFrame();
+
+    	updateGauges(guiContext);
 	}
 	
 	private void updateGauges(GuiContext guiContext) {
 		plantsGaugeTile.setValue(guiContext.getPlantsNum());
         individualsGauge.setValue(guiContext.getIndividualsNum() / Configuration.NUM_INITIAL_INDIVIDUALS * 100);
+        simpleDigitalGauge.setValue(frameRate.getFrameRate());
 	}
 
 	public void clearHexagon(long row, long column) {

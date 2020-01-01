@@ -16,7 +16,7 @@ public class EngineService extends Service<GuiContext> {
 	private KieSession kSession;
 	
 	private ClansJavaFx gui;
-
+	
     public EngineService(World world, KieSession kSession, ClansJavaFx gui) {
         this.world = world;
 		this.kSession = kSession;
@@ -36,7 +36,7 @@ public class EngineService extends Service<GuiContext> {
         
         task.setOnFailed((WorkerStateEvent event) -> {
             // another hook - callback lambda
-            //System.out.println("In Failed");
+            System.err.println("In Failed");
         });
         
         return task;
@@ -47,10 +47,6 @@ public class EngineService extends Service<GuiContext> {
         //System.out.println("In Scheduled");
     	super.scheduled();
     }
-    
-    private void started() {
-        //System.out.println("In Started");
-	}
     
     @Override
     protected void running() {

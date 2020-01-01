@@ -1,8 +1,6 @@
 package org.seccanj.clans.model.entities;
 
 import org.seccanj.clans.model.BaseEntity;
-import org.seccanj.clans.model.Direction;
-import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.model.Dna;
 import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Food;
@@ -68,14 +66,6 @@ public class Individual extends BaseEntity implements Food {
 		System.out.println("   --- Eating "+food.getEnergy());
 	}
 
-	public Direction pickRandomDirection() {
-		return Directions.directions[(int)Math.floor(Math.random() * 6)].d;
-	}
-	
-	public Directions pickRandomDirections() {
-		return Directions.directions[(int)Math.floor(Math.random() * 6)];
-	}
-	
 	public RelativeCell getTarget() {
 		return target;
 	}

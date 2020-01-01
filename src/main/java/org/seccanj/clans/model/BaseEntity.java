@@ -3,6 +3,7 @@ package org.seccanj.clans.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.util.Utils;
 
 import com.google.gson.Gson;
@@ -73,6 +74,11 @@ public abstract class BaseEntity implements Entity {
 
 	public void addEnergy(double energy) {
 		this.energy += energy;
+		
+		if (this.energy > maxEnergy) {
+			this.energy = maxEnergy;
+		}
+		
 		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
 	}
 
@@ -178,7 +184,7 @@ public abstract class BaseEntity implements Entity {
 		double targetDistance = Utils.getDistance(position, p);
 		
 		if (targetDistance < distance) {
-			distance = 1;
+			distance = 2;
 		}
 		
 		move(distance);
@@ -207,6 +213,14 @@ public abstract class BaseEntity implements Entity {
 		} while (!moved || trials > 10);
 	}
 
+	public Direction pickRandomDirection() {
+		return Directions.directions[(int)Math.floor(Math.random() * 6)].d;
+	}
+	
+	public Directions pickRandomDirections() {
+		return Directions.directions[(int)Math.floor(Math.random() * 6)];
+	}
+	
 	public long getBirthTurn() {
 		return birthTurn;
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class GuiContext {
 
+	private boolean endOfLife;
 	private List<Sprite> sprites;
 	private long plantsNum;
 	private long individualsNum;
@@ -25,6 +26,12 @@ public class GuiContext {
 	}
 	public void setIndividualsNum(long individualsNum) {
 		this.individualsNum = individualsNum;
+	}
+	public boolean isEndOfLife() {
+		return endOfLife;
+	}
+	public void setEndOfLife(boolean endOfLife) {
+		this.endOfLife = endOfLife;
 	}
 	
 }

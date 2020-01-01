@@ -125,7 +125,7 @@ end
 
 rule "Starvation"
     when
-        $individual : Individual( energy <= maxEnergy / 2 )
+        $individual : Individual( energy <= (maxEnergy * 4 / 5) )
         
         exists EndOfTurn( individual == $individual )
         
@@ -171,7 +171,7 @@ end
 
 rule "Individual end of turn"
     when
-        $individual : Individual( actionPoints == 0 )
+        $individual : Individual( actionPoints == 0 || energy <= 0 )
         
         not EndOfTurn( individual == $individual )
 

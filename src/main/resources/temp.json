@@ -1,216 +1,108 @@
-[
-	{
-		"gender": "male",
-		"target": {
-			"distance": 0.0,
-			"position": {
-				"row": 74,
-				"column": 31
-			},
-			"entity": {
-				"splitPeriod": 200,
-				"entityType": "plant",
-				"dna": {
-					"genes": {
-						"maxEnergy": {
-							"name": "maxEnergy",
-							"value": 100
-						},
-						"maxSpeed": {
-							"name": "maxSpeed",
-							"value": 0
-						},
-						"sightDistance": {
-							"name": "sightDistance",
-							"value": 0
-						},
-						"maxActionPoints": {
-							"name": "maxActionPoints",
-							"value": 10
-						},
-						"plantSplitPeriod": {
-							"name": "plantSplitPeriod",
-							"value": 200
-						},
-						"maxHealth": {
-							"name": "maxHealth",
-							"value": 100
-						}
-					}
-				},
-				"states": [],
-				"name": "org.seccanj.clans.model.entities.Plant UF8ASB8EPE",
-				"position": {
-					"row": 74,
-					"column": 31
-				},
-				"birthTurn": 0,
-				"maxActionPoints": 10,
-				"actionPoints": 10,
-				"maxEnergy": 100.0,
-				"energy": 100.0,
-				"maxHealth": 100.0,
-				"health": 100.0,
-				"maxSpeed": 0,
-				"speed": 0,
-				"maxSightDistance": 0.0,
-				"sightDistance": 0.0
-			}
-		},
-		"entityType": "individual",
-		"dna": {
-			"genes": {
-				"maxEnergy": {
-					"name": "maxEnergy",
-					"value": 100
-				},
-				"maxSpeed": {
-					"name": "maxSpeed",
-					"value": 5
-				},
-				"sightDistance": {
-					"name": "sightDistance",
-					"value": 150
-				},
-				"maxActionPoints": {
-					"name": "maxActionPoints",
-					"value": 10
-				},
-				"maxHealth": {
-					"name": "maxHealth",
-					"value": 100
-				}
-			}
-		},
-		"states": [
-			"moving"
-		],
-		"name": "org.seccanj.clans.model.entities.Individual JLCVK5Q3DV",
+{
+	"gender": "female",
+	"target": {
+		"distance": 0.0,
 		"position": {
-			"row": 91,
-			"column": 4
+			"row": 45,
+			"column": 58
 		},
-		"direction": {
-			"x": -1.0,
-			"y": -1.0
-		},
-		"birthTurn": 0,
-		"maxActionPoints": 10,
-		"actionPoints": 10,
-		"maxEnergy": 100.0,
-		"energy": 50.0,
-		"maxHealth": 100.0,
-		"health": 100.0,
-		"maxSpeed": 5,
-		"speed": 0,
-		"maxSightDistance": 150.0,
-		"sightDistance": 150.0
+		"entity": {
+			"splitPeriod": 200,
+			"entityType": "plant",
+			"dna": {
+				"genes": {
+					"maxEnergy": {
+						"name": "maxEnergy",
+						"value": 100
+					},
+					"maxSpeed": {
+						"name": "maxSpeed",
+						"value": 0
+					},
+					"sightDistance": {
+						"name": "sightDistance",
+						"value": 0
+					},
+					"maxActionPoints": {
+						"name": "maxActionPoints",
+						"value": 10
+					},
+					"plantSplitPeriod": {
+						"name": "plantSplitPeriod",
+						"value": 200
+					},
+					"maxHealth": {
+						"name": "maxHealth",
+						"value": 100
+					}
+				}
+			},
+			"states": [],
+			"name": "org.seccanj.clans.model.entities.Plant 99QR90PXFR",
+			"position": {
+				"row": 45,
+				"column": 58
+			},
+			"birthTurn": 0,
+			"maxActionPoints": 10,
+			"actionPoints": 10,
+			"maxEnergy": 100.0,
+			"energy": 100.0,
+			"maxHealth": 100.0,
+			"health": 100.0,
+			"maxSpeed": 0,
+			"speed": 0,
+			"maxSightDistance": 0.0,
+			"sightDistance": 0.0
+		}
 	},
-	{
-		"gender": "male",
-		"target": {
-			"distance": 0.0,
-			"position": {
-				"row": 74,
-				"column": 31
+	"entityType": "individual",
+	"dna": {
+		"genes": {
+			"maxEnergy": {
+				"name": "maxEnergy",
+				"value": 100
 			},
-			"entity": {
-				"splitPeriod": 200,
-				"entityType": "plant",
-				"dna": {
-					"genes": {
-						"maxEnergy": {
-							"name": "maxEnergy",
-							"value": 100
-						},
-						"maxSpeed": {
-							"name": "maxSpeed",
-							"value": 0
-						},
-						"sightDistance": {
-							"name": "sightDistance",
-							"value": 0
-						},
-						"maxActionPoints": {
-							"name": "maxActionPoints",
-							"value": 10
-						},
-						"plantSplitPeriod": {
-							"name": "plantSplitPeriod",
-							"value": 200
-						},
-						"maxHealth": {
-							"name": "maxHealth",
-							"value": 100
-						}
-					}
-				},
-				"states": [],
-				"name": "org.seccanj.clans.model.entities.Plant UF8ASB8EPE",
-				"position": {
-					"row": 74,
-					"column": 31
-				},
-				"birthTurn": 0,
-				"maxActionPoints": 10,
-				"actionPoints": 10,
-				"maxEnergy": 100.0,
-				"energy": 100.0,
-				"maxHealth": 100.0,
-				"health": 100.0,
-				"maxSpeed": 0,
-				"speed": 0,
-				"maxSightDistance": 0.0,
-				"sightDistance": 0.0
+			"maxSpeed": {
+				"name": "maxSpeed",
+				"value": 5
+			},
+			"sightDistance": {
+				"name": "sightDistance",
+				"value": 150
+			},
+			"maxActionPoints": {
+				"name": "maxActionPoints",
+				"value": 10
+			},
+			"maxHealth": {
+				"name": "maxHealth",
+				"value": 100
 			}
-		},
-		"entityType": "individual",
-		"dna": {
-			"genes": {
-				"maxEnergy": {
-					"name": "maxEnergy",
-					"value": 100
-				},
-				"maxSpeed": {
-					"name": "maxSpeed",
-					"value": 5
-				},
-				"sightDistance": {
-					"name": "sightDistance",
-					"value": 150
-				},
-				"maxActionPoints": {
-					"name": "maxActionPoints",
-					"value": 10
-				},
-				"maxHealth": {
-					"name": "maxHealth",
-					"value": 100
-				}
-			}
-		},
-		"states": [
-			"moving"
-		],
-		"name": "org.seccanj.clans.model.entities.Individual JLCVK5Q3DV",
-		"position": {
-			"row": 91,
-			"column": 3
-		},
-		"direction": {
-			"x": -1.0,
-			"y": 0.0
-		},
-		"birthTurn": 0,
-		"maxActionPoints": 10,
-		"actionPoints": 10,
-		"maxEnergy": 100.0,
-		"energy": 50.0,
-		"maxHealth": 100.0,
-		"health": 100.0,
-		"maxSpeed": 5,
-		"speed": 0,
-		"maxSightDistance": 150.0,
-		"sightDistance": 150.0
-	}
-]
+		}
+	},
+	"states": [
+		"hungry",
+		"moving"
+	],
+	"name": "org.seccanj.clans.model.entities.Individual 5TW4GMDUDK",
+	"position": {
+		"row": 41,
+		"column": 56
+	},
+	"direction": {
+		"x": -1.0,
+		"y": -1.0
+	},
+	"birthTurn": 0,
+	"maxActionPoints": 10,
+	"actionPoints": 10,
+	"maxEnergy": 100.0,
+	"energy": 0.0,
+	"maxHealth": 100.0,
+	"health": 90.0,
+	"maxSpeed": 5,
+	"speed": 0,
+	"maxSightDistance": 150.0,
+	"sightDistance": 150.0
+}

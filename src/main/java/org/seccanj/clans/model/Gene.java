@@ -3,9 +3,9 @@ package org.seccanj.clans.model;
 public class Gene {
 
 	public enum GeneType {
-		plantSplitPeriod(200),
+		plantSplitPeriod(100),
 		sightDistance(150),
-		maxEnergy(100),
+		maxEnergy(500),
 		maxHealth(100),
 		maxActionPoints(10),
 		maxSpeed(5);
@@ -40,13 +40,16 @@ public class Gene {
 	public String getName() {
 		return name;
 	}
+	
 	public Gene setName(String name) {
 		this.name = name;
 		return this;
 	}
+	
 	public Object getValue() {
 		return value;
 	}
+	
 	public Gene setValue(Object value) {
 		this.value = value;
 		return this;
