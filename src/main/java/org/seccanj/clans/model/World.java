@@ -10,9 +10,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
-import org.seccanj.clans.model.entities.Individual;
-import org.seccanj.clans.model.entities.Individual.Gender;
-import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.entities.EntityFactory;
 
 public class World {
 	
@@ -33,49 +31,52 @@ public class World {
 	}
 	
 	public Entity createEntityNear(String entityType, Position position) {
-		Entity result = null;
+		BaseEntity result = null;
 		
-		Position newPosition = new Position();
-		int trials = 0;
-		do {
-			newPosition.row = position.row + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
-			newPosition.column = position.column + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
-		} while (!World.getWorld().isFree(newPosition) && trials++ <= Configuration.NEAR_DISTANCE_SQUARE);
+		Position newPosition = getFreePositionNear(position);
 		
-		if (trials < Configuration.NEAR_DISTANCE_SQUARE) {
-			switch (EntityType.valueOf(entityType)) {
-			case individual:
-				Individual individual = new Individual();
-				individual.init();
-				individual.setBirthTurn(currentTurn);
-				individual.name = ModelUtils.getRandomName(individual);
-				individual.position = newPosition;
-				// individual.energy = Math.random() * Configuration.INDIVIDUAL_DEFAULT_ENERGY;
-				individual.gender = Gender.getRandom();
-	
-				World.getWorld().setEntity(individual.position, individual);
-				
-				result = individual;
-				
-				break;
-			case plant:
-				Plant plant = new Plant();
-				plant.init();
-				plant.position = newPosition;
-				// plant.energy = Math.random() * Configuration.PLANT_DEFAULT_ENERGY;
-				plant.setBirthTurn(currentTurn);
-	
-				World.getWorld().setEntity(plant.position, plant);
-				
-				result = plant;
-				
-				break;
-			default:
-				break;
-			}
-		}
+		if (newPosition != null) {
+			result = EntityFactory.createEntity(EntityType.valueOf(entityType));
+			result.init(ModelUtils.getRandomName(result), newPosition, currentTurn);
+			
+			World.getWorld().setEntity(newPosition, result);
+		}		
 		
 		return result;
+	}
+	
+	public Entity generateEntityNear(String entityType, Position position, BaseEntity parent1, BaseEntity parent2) {
+		BaseEntity result = null;
+		
+		Position newPosition = getFreePositionNear(position);
+		
+		if (newPosition != null) {
+			result = EntityFactory.createEntity(EntityType.valueOf(entityType), parent1, parent2);
+			result.init(ModelUtils.getRandomName(result), newPosition, currentTurn);
+			
+			World.getWorld().setEntity(newPosition, result);
+		}		
+		
+		return result;
+	}
+	
+	public Position getFreePositionNear(Position position) {
+		Position result = new Position();
+		int trials = 0;
+		do {
+			result.row = position.row + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
+			result.column = position.column + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
+		} while (!World.getWorld().isFree(result) && trials++ <= Configuration.NEAR_DISTANCE_SQUARE);
+	
+		if (trials < Configuration.NEAR_DISTANCE_SQUARE) {
+			return result;
+		}
+		
+		return null;
+	}
+	
+	public BaseEntity generate(EntityType entityType, BaseEntity parent1, BaseEntity parent2) {
+		return EntityFactory.createEntity(entityType, parent1, parent2);
 	}
 	
 	public Entity getEntity(Position p) {

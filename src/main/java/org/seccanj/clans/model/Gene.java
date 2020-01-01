@@ -3,7 +3,7 @@ package org.seccanj.clans.model;
 public class Gene {
 
 	public enum GeneType {
-		plantSplitPeriod(25),
+		plantSplitPeriod(200),
 		sightDistance(100),
 		maxEnergy(100),
 		maxHealth(100),
@@ -18,6 +18,10 @@ public class Gene {
 		
 		public Gene getGene() {
 			return new Gene(this.name(), this.defaultValue);
+		}
+		
+		public Gene getGene(Object value) {
+			return new Gene(this.name(), value);
 		}
 		
 	}
@@ -36,14 +40,16 @@ public class Gene {
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Gene setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public Object getValue() {
 		return value;
 	}
-	public void setValue(Object value) {
+	public Gene setValue(Object value) {
 		this.value = value;
+		return this;
 	}
 	
 }

@@ -1,20 +1,17 @@
 package org.seccanj.clans.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
-import org.seccanj.clans.model.Gene.GeneType;
 
 import com.google.gson.Gson;
 
 public abstract class BaseEntity implements Entity {
 
 	public EntityType entityType;
-	public Map<GeneType, Gene> dna = new HashMap<>();
+	public Dna dna = new Dna();
 
 	public Set<State> states = new HashSet<>();
+	public String name;
 	public Position position;
 	public Direction direction;
 	private long birthTurn;
@@ -34,18 +31,30 @@ public abstract class BaseEntity implements Entity {
 	public double maxSightDistance;
 	public double sightDistance;
 	
-	public BaseEntity(Map<GeneType, Gene> dna) {
+	public BaseEntity(Dna dna) {
 		this.dna = dna;
 	}
 
-	public void init() {
+	public void init(String name, Position position, long birthTurn) {
 		setCapabilities();
 		initVitals();
+
+		setBirthTurn(birthTurn);
+		setName(name);
+		setPosition(position);
 	}
 	
 	protected abstract void setCapabilities();
 	
 	protected abstract void initVitals();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	@Override
 	public Position getPosition() {
@@ -199,11 +208,13 @@ public abstract class BaseEntity implements Entity {
 		return World.getWorld().currentTurn - birthTurn;
 	}
 
-	public Map<GeneType, Gene> getDna() {
+	@Override
+	public Dna getDna() {
 		return dna;
 	}
 
-	public void setDna(Map<GeneType, Gene> dna) {
+	@Override
+	public void setDna(Dna dna) {
 		this.dna = dna;
 	}
 
@@ -272,5 +283,4 @@ public abstract class BaseEntity implements Entity {
 	public void setSightDistance(double sightDistance) {
 		this.sightDistance = sightDistance;
 	}
-
 }

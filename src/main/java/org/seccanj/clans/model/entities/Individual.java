@@ -1,14 +1,11 @@
 package org.seccanj.clans.model.entities;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Direction;
 import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.Dna;
 import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Food;
-import org.seccanj.clans.model.Gene;
 import org.seccanj.clans.model.Gene.GeneType;
 import org.seccanj.clans.model.RelativeCell;
 
@@ -28,17 +25,18 @@ public class Individual extends BaseEntity implements Food {
 	}
 	
 	public Gender gender;
-	public String name;
 	public RelativeCell target;
 
 	public Individual() {
 		super(getDefaultDna());
 		setEntityType(EntityType.individual);
+		gender = Gender.getRandom();
 	}
 
-	public Individual(Map<GeneType, Gene> dna) {
+	public Individual(Dna dna) {
 		super(dna);
 		setEntityType(EntityType.individual);
+		gender = Gender.getRandom();
 	}	
 	
 	@Override
@@ -66,14 +64,6 @@ public class Individual extends BaseEntity implements Food {
 		this.gender = gender;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public void eat(Food food) {
 		System.out.println("   --- Eating "+food.getEnergy());
 	}
@@ -94,8 +84,8 @@ public class Individual extends BaseEntity implements Food {
 		this.target = target;
 	}
 	
-	public static Map<GeneType, Gene> getDefaultDna() {
-		Map<GeneType, Gene> result = new HashMap<>();
+	public static Dna getDefaultDna() {
+		Dna result = new Dna();
 		
 		result.put(GeneType.sightDistance, GeneType.sightDistance.getGene());
 		result.put(GeneType.maxEnergy, GeneType.maxEnergy.getGene());
@@ -105,5 +95,4 @@ public class Individual extends BaseEntity implements Food {
 
 		return result;
 	}
-	
 }

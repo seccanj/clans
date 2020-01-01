@@ -9,4 +9,6 @@ public interface Entity {
 	Position getPosition();
 	
 	void resetActionPoints();
+	Dna getDna();
+	void setDna(Dna dna);
 }

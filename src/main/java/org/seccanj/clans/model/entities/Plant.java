@@ -1,12 +1,9 @@
 package org.seccanj.clans.model.entities;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.seccanj.clans.model.BaseEntity;
+import org.seccanj.clans.model.Dna;
 import org.seccanj.clans.model.EntityType;
 import org.seccanj.clans.model.Food;
-import org.seccanj.clans.model.Gene;
 import org.seccanj.clans.model.Gene.GeneType;
 
 public class Plant extends BaseEntity implements Food {
@@ -18,7 +15,7 @@ public class Plant extends BaseEntity implements Food {
 		setEntityType(EntityType.plant);
 	}
 	
-	public Plant(Map<GeneType, Gene> dna) {
+	public Plant(Dna dna) {
 		super(dna);
 		setEntityType(EntityType.plant);
 	}
@@ -43,14 +40,15 @@ public class Plant extends BaseEntity implements Food {
 		setActionPoints(getMaxActionPoints());
 	}
 
-	public static Map<GeneType, Gene> getDefaultDna() {
-		Map<GeneType, Gene> result = new HashMap<>();
+	public static Dna getDefaultDna() {
+		Dna result = new Dna();
 		
+		result.put(GeneType.sightDistance, GeneType.sightDistance.getGene(0));
 		result.put(GeneType.plantSplitPeriod, GeneType.plantSplitPeriod.getGene());
 		result.put(GeneType.maxEnergy, GeneType.maxEnergy.getGene());
 		result.put(GeneType.maxHealth, GeneType.maxHealth.getGene());
 		result.put(GeneType.maxActionPoints, GeneType.maxActionPoints.getGene());
-		result.put(GeneType.maxSpeed, GeneType.maxSpeed.getGene());
+		result.put(GeneType.maxSpeed, GeneType.maxSpeed.getGene(0));
 
 		return result;
 	}

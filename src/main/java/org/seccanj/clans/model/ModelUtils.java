@@ -2,7 +2,6 @@ package org.seccanj.clans.model;
 
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
-import org.seccanj.clans.model.entities.Individual;
 
 public class ModelUtils {
 
@@ -45,10 +44,10 @@ public class ModelUtils {
 		return (row >= 0 && row < Configuration.WORLD_MAX_ROWS && column >= 0 && column < Configuration.WORLD_MAX_COLUMNS);
 	}
 
-	public static String getRandomName(Individual individual) {
+	public static String getRandomName(BaseEntity entity) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(individual.getClass().getName());
+		sb.append(entity.getClass().getName());
 		sb.append(' ');
 		
 		for (int i=0; i<10; i++) {

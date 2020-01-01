@@ -34,18 +34,17 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 public class ClansJavaFx extends Application {
 
 	public static final double SQUARE3 = Math.sqrt(3);
-	public static final double SCREEN_WIDTH = 1500;
-	public static final double SCREEN_HEIGHT = 900;
+	public static final double SCREEN_WIDTH = 1440;
+	public static final double SCREEN_HEIGHT = 950;
 	public static final double DASHBOARD_WIDTH = 160;
-	public static final double MAP_START_X = DASHBOARD_WIDTH + 5;
-	public static final double MAP_START_Y = 5;
-	public static final double TILE_SIZE = 150;
+	public static final double MAP_START_X = DASHBOARD_WIDTH * 2 + 25;
+	public static final double MAP_START_Y = 10;
+	public static final double TILE_SIZE = 160;
 
 	public static Color COLOR_MAP_BACKGROUND = Color.WHITE;
 	public static Color COLOR_MAP_LINE = Color.BLUE;
@@ -80,12 +79,14 @@ public class ClansJavaFx extends Application {
 		gc = canvas.getGraphicsContext2D();
 
 		root.getChildren().add(canvas);
-		
+
         plantsGaugeTile = TileBuilder.create()
                 .prefSize(TILE_SIZE, TILE_SIZE)
-                .skinType(SkinType.SPARK_LINE)
-                .averagingPeriod(50)
-                .numberOfValuesForTrendCalculation(50)
+                .skinType(SkinType.STOCK)
+                //.averagingPeriod(50)
+                
+                .maxValue(50000)
+                //.numberOfValuesForTrendCalculation(50)
                 .title("Plants")
                 .unit("num")
                 
