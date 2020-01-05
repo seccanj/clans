@@ -2,12 +2,12 @@ package org.seccanj.clans.model.entities;
 
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Dna;
-import org.seccanj.clans.model.Entity;
-import org.seccanj.clans.model.EntityType;
+import org.seccanj.clans.model.Being;
+import org.seccanj.clans.model.BeingType;
 
 public class EntityFactory {
 
-	public static BaseEntity createEntity(EntityType entityType) {
+	public static BaseEntity createEntity(BeingType entityType) {
 		switch (entityType) {
 		case individual:
 			return new Individual();
@@ -18,7 +18,7 @@ public class EntityFactory {
 		}
 	}
 	
-	public static BaseEntity createEntity(EntityType entityType, Entity parent1, Entity parent2) {
+	public static BaseEntity createEntity(BeingType entityType, Being parent1, Being parent2) {
 		
 		Dna dna = Dna.getMixedDna(parent1.getDna(), parent2.getDna());
 		

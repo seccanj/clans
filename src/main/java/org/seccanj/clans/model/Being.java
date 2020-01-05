@@ -1,8 +1,8 @@
 package org.seccanj.clans.model;
 
-public interface Entity {
+public interface Being {
 
-	EntityType getEntityType();
+	BeingType getEntityType();
 	String getEntityTypeName();
 	
 	void moveTo(Position p, int distance);

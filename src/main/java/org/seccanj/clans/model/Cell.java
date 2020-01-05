@@ -3,12 +3,12 @@ package org.seccanj.clans.model;
 public class Cell {
 
 	private Position position;
-	private Entity entity;
+	private Being entity;
 	
 	public Cell() {
 	}
 	
-	public Cell(Position position, Entity entity) {
+	public Cell(Position position, Being entity) {
 		this.setPosition(position);
 		this.setEntity(entity);
 	}
@@ -21,11 +21,11 @@ public class Cell {
 		this.position = position;
 	}
 
-	public Entity getEntity() {
+	public Being getEntity() {
 		return entity;
 	}
 
-	public void setEntity(Entity entity) {
+	public void setEntity(Being entity) {
 		this.entity = entity;
 	}	
 }

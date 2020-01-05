@@ -17,9 +17,9 @@ public class World {
 	
 	public static World world = new World();
 	
-	public Entity[][] map = new Entity[Configuration.WORLD_MAX_ROWS][Configuration.WORLD_MAX_COLUMNS];
+	public Being[][] map = new Being[Configuration.WORLD_MAX_ROWS][Configuration.WORLD_MAX_COLUMNS];
 	
-	public Set<Entity> entities = new HashSet<Entity>();
+	public Set<Being> entities = new HashSet<Being>();
 	
 	public long currentTurn = 0;
 
@@ -27,32 +27,34 @@ public class World {
 		return world;
 	}
 
-	public Entity createEntity(String entityType) {
+	public Being createEntity(String entityType) {
 		return createEntityNear(entityType, Position.getRandom());
 	}
 	
-	public Entity createEntityNear(String entityType, Position position) {
+	public Being createEntityNear(String entityType, Position position) {
 		BaseEntity result = null;
 		
 		Position newPosition = getFreePositionNear(position);
 		
 		if (newPosition != null) {
-			result = EntityFactory.createEntity(EntityType.valueOf(entityType));
+			result = EntityFactory.createEntity(BeingType.valueOf(entityType));
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			World.getWorld().setEntity(newPosition, result);
-		}		
+		} else {
+			System.err.println("Unable to create entity because no cell free near "+position.toString());
+		}
 		
 		return result;
 	}
 	
-	public Entity generateEntityNear(String entityType, Position position, BaseEntity parent1, BaseEntity parent2) {
+	public Being generateEntityNear(String entityType, Position position, BaseEntity parent1, BaseEntity parent2) {
 		BaseEntity result = null;
 		
 		Position newPosition = getFreePositionNear(position);
 		
 		if (newPosition != null) {
-			result = EntityFactory.createEntity(EntityType.valueOf(entityType), parent1, parent2);
+			result = EntityFactory.createEntity(BeingType.valueOf(entityType), parent1, parent2);
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			World.getWorld().setEntity(newPosition, result);
@@ -76,11 +78,11 @@ public class World {
 		return null;
 	}
 	
-	public BaseEntity generate(EntityType entityType, BaseEntity parent1, BaseEntity parent2) {
+	public BaseEntity generate(BeingType entityType, BaseEntity parent1, BaseEntity parent2) {
 		return EntityFactory.createEntity(entityType, parent1, parent2);
 	}
 	
-	public Entity getEntity(Position p) {
+	public Being getEntity(Position p) {
 		if (Utils.inWorld(p.row, p.column)) {
 			return map[p.row][p.column];
 		} else {
@@ -88,7 +90,7 @@ public class World {
 		}
 	}
 	
-	public void setEntity(Position p, Entity e) {
+	public void setEntity(Position p, Being e) {
 		if (Utils.inWorld(p.row, p.column)) {
 			map[p.row][p.column] = e;
 			entities.add(e);
@@ -109,7 +111,7 @@ public class World {
 		return moveEntity(getEntity(a), b);
 	}
 
-	public boolean moveEntity(Entity e, Position p) {
+	public boolean moveEntity(Being e, Position p) {
 		boolean result = false;
 		
 		System.out.println("moveEntity "+e.toString()+" to "+p.toString());
@@ -125,7 +127,7 @@ public class World {
 		return result;
 	}
 
-	public void removeEntity(Entity e) {
+	public void removeEntity(Being e) {
 		map[e.getPosition().row][e.getPosition().column] = null;
 		entities.remove(e);
 	}
@@ -145,9 +147,9 @@ public class World {
 		
 		try {
 			DistanceComparator d = new DistanceComparator(observer);
-			EntityType et = EntityType.valueOf(entityType);
+			BeingType et = BeingType.valueOf(entityType);
 			
-			Entity nearest = entities.stream()
+			Being nearest = entities.stream()
 				.filter(e -> e.getEntityType() == et)
 				.min(d)
 				.get();
@@ -185,7 +187,7 @@ public class World {
 			for (int j=0; j<=upToDistance; j++) {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
-					Entity e = world.getEntity(prevPos);
+					Being e = world.getEntity(prevPos);
 					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(nextDir.d, j-1);
 						result = new RelativeCell(prevPos, e, nextDir.d, j);
@@ -195,7 +197,7 @@ public class World {
 				
 				if (result == null) {
 					thisPos.move(lastDir.d, j);
-					Entity e = world.getEntity(thisPos);
+					Being e = world.getEntity(thisPos);
 					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(lastDir.d, j-1);
 						result = new RelativeCell(prevPos, e, lastDir.d, j);
@@ -224,14 +226,14 @@ public class World {
 			for (int j=0; j<=upToDistance; j++) {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
-					Entity e = world.getEntity(prevPos);
+					Being e = world.getEntity(prevPos);
 					if (e != null) {
 						result.add(new RelativeCell(prevPos, e, nextDir.d, j));
 					}
 				}
 				
 				thisPos.move(lastDir.d, j);
-				Entity e = world.getEntity(thisPos);
+				Being e = world.getEntity(thisPos);
 				if (e != null) {
 					result.add(new RelativeCell(prevPos, e, lastDir.d, j));
 				}
@@ -263,7 +265,7 @@ public class World {
         // go !
         kSession.insert(World.getWorld());
         
-        for (Entity e : World.getWorld().entities) {
+        for (Being e : World.getWorld().entities) {
    			kSession.insert(e);
         }
 

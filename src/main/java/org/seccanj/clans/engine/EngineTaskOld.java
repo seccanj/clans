@@ -13,27 +13,27 @@ import org.seccanj.clans.model.World;
 import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Plant;
 
-public class EngineTask implements Runnable {
+import javafx.concurrent.Task;
+
+public class EngineTaskOld extends Task<GuiContext> {
 
 	private World world;
 
 	private KieSession kSession;
 
-	GuiContext guiContext;
-	
-	public EngineTask(World world, KieSession kSession) {
+	public EngineTaskOld(World world, KieSession kSession) {
 		this.world = world;
 		this.kSession = kSession;
 	}
 
 	@Override
-	public void run() {
+	protected GuiContext call() throws Exception {
 		System.out.println(">>>>>>>>>>>>>>>>>> START NEW TURN: " + world.currentTurn++);
 
-		guiContext = new GuiContext();
+		GuiContext result = new GuiContext();
 		List<Sprite> sprites = new ArrayList<>();
 		
-		guiContext.setSprites(sprites);
+		result.setSprites(sprites);
 		
 		try {
 			kSession.fireAllRules();
@@ -46,14 +46,14 @@ public class EngineTask implements Runnable {
 	
 			QueryResults allPlants = kSession.getQueryResults("All Plants");
 			System.out.println("we have " + allPlants.size() + " Plants left");
-			guiContext.setPlantsNum(allPlants.size());
+			result.setPlantsNum(allPlants.size());
 	
 			QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
 			System.out.println("we have " + allIndividuals.size() + " Individuals left");
-			guiContext.setIndividualsNum(allIndividuals.size());
+			result.setIndividualsNum(allIndividuals.size());
 			
 			if (allIndividuals.size() == 0) {
-				guiContext.setEndOfLife(true);
+				result.setEndOfLife(true);
 			}
 			
 			// Handle plants
@@ -76,6 +76,18 @@ public class EngineTask implements Runnable {
 				kSession.update(row.getFactHandle("$individual"), e, "actionPoints");
 			}
 	
+			/*
+			 * entityHandles.stream().forEach(f -> { Entity e = (Entity)
+			 * kSession.getObject(f);
+			 * 
+			 * if (e instanceof Individual) {
+			 * clansJavaFx.drawIndividual(e.getPosition().row, e.getPosition().column);
+			 * 
+			 * ((Individual) e).resetHasLived(); kSession.update(f, e, "leftActionPoints");
+			 * } else if (e instanceof Plant) { clansJavaFx.drawPlant(e.getPosition().row,
+			 * e.getPosition().column); } })
+			 */;
+	
 			removeEndOfTurns();
 	
 			removeActionDones();
@@ -83,6 +95,26 @@ public class EngineTask implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+			
+		return result;
+	}
+
+	@Override
+	protected void succeeded() {
+		super.succeeded();
+		updateMessage("Done!");
+	}
+
+	@Override
+	protected void cancelled() {
+		super.cancelled();
+		updateMessage("Cancelled!");
+	}
+
+	@Override
+	protected void failed() {
+		super.failed();
+		updateMessage("Failed!");
 	}
 
 	private void removeEndOfTurns() {
@@ -101,10 +133,6 @@ public class EngineTask implements Runnable {
 		for (QueryResultsRow row : results) {
 			kSession.delete(row.getFactHandle("$actionDone"));
 		}
-	}
-
-	public GuiContext getGuiContext() {
-		return guiContext;
 	}
 
 }

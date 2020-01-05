@@ -19,7 +19,7 @@ public class RelativeCell extends Cell {
 		this.distance = distance;
 	}
 
-	public RelativeCell(Position position, Entity entity, Direction direction, double distance) {
+	public RelativeCell(Position position, Being entity, Direction direction, double distance) {
 		super(position, entity);
 		this.direction = direction;
 		this.distance = distance;

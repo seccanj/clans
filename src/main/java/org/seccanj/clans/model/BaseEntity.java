@@ -8,9 +8,9 @@ import org.seccanj.clans.util.Utils;
 
 import com.google.gson.Gson;
 
-public abstract class BaseEntity implements Entity {
+public abstract class BaseEntity implements Being {
 
-	public EntityType entityType;
+	public BeingType entityType;
 	public Dna dna = new Dna();
 
 	public Set<State> states = new HashSet<>();
@@ -165,7 +165,7 @@ public abstract class BaseEntity implements Entity {
 	}
 	
 	@Override
-	public EntityType getEntityType() {
+	public BeingType getEntityType() {
 		return entityType;
 	}
 
@@ -174,7 +174,7 @@ public abstract class BaseEntity implements Entity {
 		return entityType.name();
 	}
 
-	public void setEntityType(EntityType entityType) {
+	public void setEntityType(BeingType entityType) {
 		this.entityType = entityType;
 	}
 

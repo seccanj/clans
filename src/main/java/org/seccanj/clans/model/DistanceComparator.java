@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.seccanj.clans.util.Utils;
 
-public class DistanceComparator implements Comparator<Entity>{
+public class DistanceComparator implements Comparator<Being>{
 
 	Position source;
 	
@@ -13,7 +13,7 @@ public class DistanceComparator implements Comparator<Entity>{
 	}
 	
 	@Override
-	public int compare(Entity e1, Entity e2) {
+	public int compare(Being e1, Being e2) {
 		
 		int result = -1;
 		

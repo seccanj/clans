@@ -2,7 +2,7 @@ package org.seccanj.clans.model.entities;
 
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Dna;
-import org.seccanj.clans.model.EntityType;
+import org.seccanj.clans.model.BeingType;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.Gene.GeneType;
 
@@ -12,12 +12,12 @@ public class Plant extends BaseEntity implements Food {
 	
 	public Plant() {
 		super(getDefaultDna());
-		setEntityType(EntityType.plant);
+		setEntityType(BeingType.plant);
 	}
 	
 	public Plant(Dna dna) {
 		super(dna);
-		setEntityType(EntityType.plant);
+		setEntityType(BeingType.plant);
 	}
 
 	public boolean shouldSplit() {

@@ -1,6 +1,6 @@
 package org.seccanj.clans.model;
 
-public enum EntityType {
+public enum BeingType {
 
 	individual,
 	plant

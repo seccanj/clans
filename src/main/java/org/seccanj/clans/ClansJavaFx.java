@@ -9,11 +9,11 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.engine.EngineService;
+import org.seccanj.clans.engine.EngineServiceOld;
 import org.seccanj.clans.gui.FrameRate;
 import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
-import org.seccanj.clans.model.Entity;
+import org.seccanj.clans.model.Being;
 import org.seccanj.clans.model.World;
 
 import eu.hansolo.medusa.Gauge;
@@ -143,12 +143,12 @@ public class ClansJavaFx extends Application {
 
 		Set<FactHandle> entityHandles = new HashSet<>();
 
-		for (Entity e : World.getWorld().entities) {
+		for (Being e : World.getWorld().entities) {
 			entityHandles.add(kSession.insert(e));
 			// kSession.insert(new Cell(e.getPosition(), e));
 		}
 
-		EngineService service = new EngineService(world, kSession, this);
+		EngineServiceOld service = new EngineServiceOld(world, kSession, this);
         service.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent t) {

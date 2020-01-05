@@ -1,5 +1,5 @@
 import org.seccanj.clans.ClansJavaFx;
-import org.seccanj.clans.model.Entity;
+import org.seccanj.clans.model.Being;
 import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.RelativeCell;
 import org.seccanj.clans.model.World;

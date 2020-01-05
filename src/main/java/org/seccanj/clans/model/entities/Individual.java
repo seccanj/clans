@@ -2,7 +2,7 @@ package org.seccanj.clans.model.entities;
 
 import org.seccanj.clans.model.BaseEntity;
 import org.seccanj.clans.model.Dna;
-import org.seccanj.clans.model.EntityType;
+import org.seccanj.clans.model.BeingType;
 import org.seccanj.clans.model.Food;
 import org.seccanj.clans.model.Gene.GeneType;
 import org.seccanj.clans.model.RelativeCell;
@@ -27,13 +27,13 @@ public class Individual extends BaseEntity implements Food {
 
 	public Individual() {
 		super(getDefaultDna());
-		setEntityType(EntityType.individual);
+		setEntityType(BeingType.individual);
 		gender = Gender.getRandom();
 	}
 
 	public Individual(Dna dna) {
 		super(dna);
-		setEntityType(EntityType.individual);
+		setEntityType(BeingType.individual);
 		gender = Gender.getRandom();
 	}	
 	
