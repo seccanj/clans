@@ -120,6 +120,8 @@ public class Clans extends GameApplication {
 		*/
 		
 		drawGauges();
+
+        frameRate = new FrameRate();
 	}
 
 	@Override
@@ -148,24 +150,25 @@ public class Clans extends GameApplication {
 	@Override
 	protected void onUpdate(double tpf) {
 		System.out.println("On update");
+
+		frameRate.newFrame();
 		
 		World.getWorld().currentTurn++;
+		GuiContext guiContext = new GuiContext();
 		
 		kSession.fireAllRules();
 
 		QueryResults allPlants = kSession.getQueryResults("All Plants");
 		System.out.println("we have " + allPlants.size() + " Plants left");
-		//result.setPlantsNum(allPlants.size());
+		guiContext.setPlantsNum(allPlants.size());
 
 		QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
 		System.out.println("we have " + allIndividuals.size() + " Individuals left");
-		//result.setIndividualsNum(allIndividuals.size());
+		guiContext.setIndividualsNum(allIndividuals.size());
 		
-		/*
 		if (allIndividuals.size() == 0) {
-			result.setEndOfLife(true);
+			guiContext.setEndOfLife(true);
 		}
-		*/
 
 		// Handle plants
 		for (QueryResultsRow row : allPlants) {
@@ -189,7 +192,7 @@ public class Clans extends GameApplication {
 				}
 			}
 		}
-
+		
 		// Handle individuals
 		for (QueryResultsRow row : allIndividuals) {
 			Individual e = (Individual) row.get("$individual");
@@ -202,6 +205,8 @@ public class Clans extends GameApplication {
 		removeEndOfTurns();
 
 		removeActionDones();
+
+		updateGauges(guiContext);
 	}
 	
 	private void drawGauges() {
@@ -379,7 +384,7 @@ public class Clans extends GameApplication {
 
 	private void updateGauges(GuiContext guiContext) {
 		plantsGaugeTile.setValue(guiContext.getPlantsNum());
-		individualsGauge.setValue(guiContext.getIndividualsNum() / Configuration.NUM_INITIAL_INDIVIDUALS * 100);
+		individualsGauge.setValue(((double)guiContext.getIndividualsNum() / (double)Configuration.NUM_INITIAL_INDIVIDUALS * 100));
 		simpleDigitalGauge.setValue(frameRate.getFrameRate());
 	}
 
