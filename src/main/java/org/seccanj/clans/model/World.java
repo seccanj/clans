@@ -41,8 +41,8 @@ public class World {
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			World.getWorld().setEntity(newPosition, result);
-		} else {
-			System.err.println("Unable to create entity because no cell free near "+position.toString());
+//		} else {
+//			System.err.println("Unable to create entity because no cell free near "+position.toString());
 		}
 		
 		return result;

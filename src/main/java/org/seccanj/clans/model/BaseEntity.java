@@ -179,7 +179,7 @@ public abstract class BaseEntity implements Being {
 	}
 
 	@Override
-	public void moveTo(Position p, int distance) {
+	public boolean moveTo(Position p, int distance) {
 		direction = Utils.getDirection(position, p);
 		double targetDistance = Utils.getDistance(position, p);
 		
@@ -187,15 +187,15 @@ public abstract class BaseEntity implements Being {
 			distance = 2;
 		}
 		
-		move(distance);
+		return move(distance);
 	}
 
-	public void move(Direction d, int distance) {
+	public boolean move(Direction d, int distance) {
 		direction = d;
-		move(distance);
+		return move(distance);
 	}
 	
-	public void move(int distance) {
+	public boolean move(int distance) {
 		boolean moved = false;
 		int trials = 0;
 		
@@ -210,7 +210,9 @@ public abstract class BaseEntity implements Being {
 				direction = Direction.getRandom().d;
 				trials++;
 			}
-		} while (!moved || trials > 10);
+		} while (!moved && trials < 10);
+		
+		return moved;
 	}
 
 	public Direction pickRandomDirection() {

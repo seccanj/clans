@@ -5,7 +5,7 @@ public interface Being {
 	BeingType getEntityType();
 	String getEntityTypeName();
 	
-	void moveTo(Position p, int distance);
+	boolean moveTo(Position p, int distance);
 	Position getPosition();
 	
 	void resetActionPoints();
