@@ -19,7 +19,7 @@ public class World {
 	
 	public Being[][] map = new Being[Configuration.WORLD_MAX_ROWS][Configuration.WORLD_MAX_COLUMNS];
 	
-	public Set<Being> entities = new HashSet<Being>();
+	private Set<Being> entities = new HashSet<Being>();
 	
 	public long currentTurn = 0;
 
@@ -97,6 +97,14 @@ public class World {
 		} else {
 			throw new RuntimeException("Coordinates "+p.toString()+" are out of the world.");
 		}
+	}
+	
+	public Set<Being> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(Set<Being> entities) {
+		this.entities = entities;
 	}
 	
 	public boolean isFree(Position p) {
@@ -255,6 +263,10 @@ public class World {
 		return result;
 	}
 
+	public long incrementTurn() {
+		return ++currentTurn;
+	}
+	
 	public void executeRuleProcess(String ruleProcess) {
         // load up the knowledge base
 		KieServices kieServices = KieServices.Factory.get();
@@ -272,5 +284,5 @@ public class World {
         kSession.startProcess(ruleProcess);
         kSession.fireAllRules();
 	}
-	
+
 }

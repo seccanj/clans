@@ -21,7 +21,7 @@ rule "Living"
         $world : World()
 
     then
-        System.out.println("Living: "+$individual.toString());
+        System.out.println("Living: "+$individual.getName());
         
         modify ( $individual ) {
         	useActionPoints( 1 )

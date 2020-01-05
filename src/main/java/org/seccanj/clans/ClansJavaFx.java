@@ -143,7 +143,7 @@ public class ClansJavaFx extends Application {
 
 		Set<FactHandle> entityHandles = new HashSet<>();
 
-		for (Being e : World.getWorld().entities) {
+		for (Being e : World.getWorld().getEntities()) {
 			entityHandles.add(kSession.insert(e));
 			// kSession.insert(new Cell(e.getPosition(), e));
 		}
