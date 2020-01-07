@@ -3,6 +3,7 @@ package org.seccanj.clans.model;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.kie.api.KieServices;
@@ -20,6 +21,7 @@ public class World {
 	public Being[][] map = new Being[Configuration.WORLD_MAX_ROWS][Configuration.WORLD_MAX_COLUMNS];
 	
 	private Set<Being> entities = new HashSet<Being>();
+	private Set<Being> newBorn = new HashSet<Being>();
 	
 	public long currentTurn = 0;
 
@@ -40,7 +42,7 @@ public class World {
 			result = EntityFactory.createEntity(BeingType.valueOf(entityType));
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
-			World.getWorld().setEntity(newPosition, result);
+			setEntity(newPosition, result);
 //		} else {
 //			System.err.println("Unable to create entity because no cell free near "+position.toString());
 		}
@@ -57,7 +59,10 @@ public class World {
 			result = EntityFactory.createEntity(BeingType.valueOf(entityType), parent1, parent2);
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
-			World.getWorld().setEntity(newPosition, result);
+			setEntity(newPosition, result);
+			getNewBorn().add(result);
+//		} else {
+//			System.err.println("Unable to generate entity because no cell free near "+position.toString());
 		}		
 		
 		return result;
@@ -69,7 +74,7 @@ public class World {
 		do {
 			result.row = position.row + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
 			result.column = position.column + (int) Math.round(Math.random() * Configuration.NEAR_DISTANCE);
-		} while (!World.getWorld().isFree(result) && trials++ <= Configuration.NEAR_DISTANCE_SQUARE);
+		} while (!isFree(result) && trials++ <= Configuration.NEAR_DISTANCE_SQUARE);
 	
 		if (trials < Configuration.NEAR_DISTANCE_SQUARE) {
 			return result;
@@ -157,17 +162,19 @@ public class World {
 			DistanceComparator d = new DistanceComparator(observer);
 			BeingType et = BeingType.valueOf(entityType);
 			
-			Being nearest = entities.stream()
+			Optional<Being> optionalBeing = entities.stream()
 				.filter(e -> e.getEntityType() == et)
-				.min(d)
-				.get();
+				.min(d);
 			
-			if (nearest != null) {
+			if (optionalBeing.isPresent()) {
+				Being nearest = optionalBeing.get();
+			
 				double distance = Utils.getDistance(observer, nearest.getPosition());
 				
 				System.out.println("   Found nearest: Distance="+distance+" to: "+nearest.toString());
 				
-				if (distance <= upToDistance) {
+				if (distance > 0.6 && distance <= upToDistance) {
+					result.setValid(true);
 					result.setPosition(nearest.getPosition());
 					result.setEntity(nearest);
 				}
@@ -195,7 +202,7 @@ public class World {
 			for (int j=0; j<=upToDistance; j++) {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
-					Being e = world.getEntity(prevPos);
+					Being e = getEntity(prevPos);
 					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(nextDir.d, j-1);
 						result = new RelativeCell(prevPos, e, nextDir.d, j);
@@ -205,7 +212,7 @@ public class World {
 				
 				if (result == null) {
 					thisPos.move(lastDir.d, j);
-					Being e = world.getEntity(thisPos);
+					Being e = getEntity(thisPos);
 					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
 						prevPos.move(lastDir.d, j-1);
 						result = new RelativeCell(prevPos, e, lastDir.d, j);
@@ -234,14 +241,14 @@ public class World {
 			for (int j=0; j<=upToDistance; j++) {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
-					Being e = world.getEntity(prevPos);
+					Being e = getEntity(prevPos);
 					if (e != null) {
 						result.add(new RelativeCell(prevPos, e, nextDir.d, j));
 					}
 				}
 				
 				thisPos.move(lastDir.d, j);
-				Being e = world.getEntity(thisPos);
+				Being e = getEntity(thisPos);
 				if (e != null) {
 					result.add(new RelativeCell(prevPos, e, lastDir.d, j));
 				}
@@ -283,6 +290,18 @@ public class World {
 
         kSession.startProcess(ruleProcess);
         kSession.fireAllRules();
+	}
+
+	public Set<Being> getNewBorn() {
+		return newBorn;
+	}
+
+	public void setNewBorn(Set<Being> newBorn) {
+		this.newBorn = newBorn;
+	}
+
+	public void resetNewBorn() {
+		newBorn.clear();
 	}
 
 }

@@ -2,6 +2,7 @@ package org.seccanj.clans;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.kie.api.KieServices;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
@@ -44,11 +45,11 @@ public class Clans extends GameApplication {
 	private KieSession kSession;
 	private FrameRate frameRate;
 
+	private Tile turnsGaugeTile;
 	private Tile plantsGaugeTile;
-	private Gauge individualsGauge;
 	private Tile individualsGaugeTile;
 	private Gauge simpleDigitalGauge;
-	private Tile simpleDigitalGaugeTile;
+	private Tile fpsSimpleDigitalGaugeTile;
 	
 	private Map<String, Entity> individuals = new HashMap<>();
 	private Map<String, Entity> plants = new HashMap<>();
@@ -108,6 +109,9 @@ public class Clans extends GameApplication {
 		// Handle plants
 		for (QueryResultsRow row : allPlants) {
 			Plant plant = (Plant) row.get("$plant");
+
+			plant.addTurn();
+			kSession.update(row.getFactHandle("$plant"), plant, "age");
 			
 			if (plant.shouldSplit()) {
 				Plant newPlant = (Plant) world.createEntityNear("plant", plant.getPosition());
@@ -130,20 +134,33 @@ public class Clans extends GameApplication {
 		
 		// Handle individuals
 		for (QueryResultsRow row : allIndividuals) {
-			Individual e = (Individual) row.get("$individual");
-			//System.out.println("   [Individual left is: " + e.toString());
+			Individual individual = (Individual) row.get("$individual");
+			//System.out.println("   [Individual left is: " + individual.toString());
 			
-			e.resetActionPoints();
-			kSession.update(row.getFactHandle("$individual"), e, "actionPoints");
+			individual.resetActionPoints();
+			individual.addTurn();
+			kSession.update(row.getFactHandle("$individual"), individual, "actionPoints", "age");
 		}
 
 		removeEndOfTurns();
 
 		removeActionDones();
 
+		insertNewBorns();
+		
 		updateGauges(guiContext);
 	}
 	
+	private void insertNewBorns() {
+		Set<Being> newBorns = world.getNewBorn();
+		
+		if (!newBorns.isEmpty()) {
+			newBorns.forEach(b -> kSession.insert(b));
+		}
+		
+		world.resetNewBorn();
+	}
+
 	private void initRuleEngine() {
 		// load up the knowledge base
 		KieServices kieServices = KieServices.Factory.get();
@@ -178,9 +195,6 @@ public class Clans extends GameApplication {
                 	e.translate(Hexagons.getActualX(individual.getPosition()) - e.getX(), Hexagons.getActualY(individual.getPosition()) - e.getY());
                 } else if (event.getMatch().getRule().getName().equalsIgnoreCase("Eat plant")) {
                 	System.out.println("Matching 'Eat plant'");
-
-            		System.out.println("  -- Plant entities: "+plants.size());
-            		plants.keySet().forEach(k -> System.out.println("   ------ Plant key: "));
 
                 	Plant plant = (Plant) event.getMatch().getObjects().get(2);
                 	Entity e = plants.remove(plant.getName());
@@ -242,6 +256,13 @@ public class Clans extends GameApplication {
 	}
 
 	private void drawGauges() {
+		turnsGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.STOCK)
+				// .averagingPeriod(50)
+				.maxValue(100000)
+				.title("Turns").unit("num")
+				.build();
+		turnsGaugeTile.setValue(0);
+
 		plantsGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.STOCK)
 				// .averagingPeriod(50)
 				.maxValue(50000)
@@ -254,17 +275,19 @@ public class Clans extends GameApplication {
 				.build();
 		plantsGaugeTile.setValue(Configuration.NUM_INITIAL_PLANTS);
 
-		individualsGauge = createGauge(Gauge.SkinType.DASHBOARD);
-		individualsGauge.setValue(0);
-		individualsGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.CUSTOM)
-				.title("Individuals").text("Percentage").graphic(individualsGauge).build();
+		individualsGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.STOCK)
+				// .averagingPeriod(50)
+				.maxValue(100000)
+				.title("Individuals").unit("num")
+				.build();
+		individualsGaugeTile.setValue(0);
 
 		simpleDigitalGauge = createGauge(Gauge.SkinType.SIMPLE_DIGITAL);
 		simpleDigitalGauge.setValue(0);
-		simpleDigitalGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.CUSTOM)
+		fpsSimpleDigitalGaugeTile = TileBuilder.create().prefSize(Configuration.TILE_SIZE, Configuration.TILE_SIZE).skinType(SkinType.CUSTOM)
 				.maxValue(30).title("Frame Rate").text("FPS").graphic(simpleDigitalGauge).build();
 
-		FlowGridPane pane = new FlowGridPane(2, 6, plantsGaugeTile, individualsGaugeTile, simpleDigitalGaugeTile);
+		FlowGridPane pane = new FlowGridPane(2, 6, turnsGaugeTile, fpsSimpleDigitalGaugeTile, plantsGaugeTile, individualsGaugeTile);
 		pane.setHgap(5);
 		pane.setVgap(5);
 		pane.setPadding(new Insets(5));
@@ -275,8 +298,9 @@ public class Clans extends GameApplication {
 	}
 
 	private void updateGauges(GuiContext guiContext) {
+		turnsGaugeTile.setValue(world.currentTurn);
 		plantsGaugeTile.setValue(guiContext.getPlantsNum());
-		individualsGauge.setValue(((double)guiContext.getIndividualsNum() / (double)Configuration.NUM_INITIAL_INDIVIDUALS * 100));
+		individualsGaugeTile.setValue(guiContext.getIndividualsNum());
 		simpleDigitalGauge.setValue(frameRate.getFrameRate());
 	}
 

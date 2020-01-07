@@ -18,6 +18,7 @@ public abstract class BaseEntity implements Being {
 	public Position position;
 	public Direction direction;
 	private long birthTurn;
+	private long age;
 
 	public int maxActionPoints;
 	private int actionPoints;
@@ -231,8 +232,12 @@ public abstract class BaseEntity implements Being {
 		this.birthTurn = birthTurn;
 	}
 	
+	public void addTurn() {
+		age++;
+	}
+	
 	public long getAge() {
-		return World.getWorld().currentTurn - birthTurn;
+		return age;
 	}
 
 	@Override
@@ -309,5 +314,9 @@ public abstract class BaseEntity implements Being {
 
 	public void setSightDistance(double sightDistance) {
 		this.sightDistance = sightDistance;
+	}
+
+	public void setAge(long age) {
+		this.age = age;
 	}
 }

@@ -1,4 +1,5 @@
 import org.seccanj.clans.ClansJavaFx;
+import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Being;
 import org.seccanj.clans.model.Cell;
 import org.seccanj.clans.model.RelativeCell;
@@ -37,7 +38,7 @@ rule "Find food"
 
         $world : World()
         
-		$targetCell: RelativeCell() from $world.scanFirst2( "plant", $position, $individual.sightDistance )
+		$targetCell: RelativeCell( valid ) from $world.scanFirst2( "plant", $position, $individual.sightDistance )
 		
     then
         System.out.println("Setting target for "+$individual.toString());
@@ -139,7 +140,15 @@ rule "Starvation"
         };
 
         modify ( $individual ) {
+        	removeState( "mating" )
+        };
+
+        modify ( $individual ) {
         	addState( "hungry" )
+        };
+
+        modify ( $individual ) {
+        	setTarget( null )
         };
 
 		insert(	new ActionDone( $individual, "starvation" ) );
@@ -166,6 +175,85 @@ rule "Recovering"
         };
 
 		insert(	new ActionDone( $individual, "recovering" ) );
+
+end
+
+rule "Mating"
+    when
+        $individual : Individual( age >= 100, !hasState("mating"), !hasState("moving"), !hasState("hungry") )
+        
+        exists EndOfTurn( individual == $individual )
+        
+        not ActionDone( individual == $individual, actionType == "mating" )
+
+    then
+        System.out.println("Mating "+$individual.toString());
+
+        modify ( $individual ) {
+        	addState( "mating" )
+        };
+
+		insert(	new ActionDone( $individual, "mating" ) );
+
+end
+
+rule "Find partner"
+    when
+        $individual : Individual( hasState("mating"), target == null, $position : position )
+
+        not ActionDone( individual == $individual, actionType == "setTarget" )
+
+        $world : World()
+        
+		$targetCell: RelativeCell( valid ) from $world.scanFirst2( "individual", $position, $individual.sightDistance )
+		
+    then
+        System.out.println("Setting mating target for "+$individual.toString());
+        
+        modify ( $individual ) {
+        	setTarget( $targetCell )
+        };
+
+        modify ( $individual ) {
+        	addState("moving")
+        };
+
+		insert(	new ActionDone( $individual, "setTarget" ) );
+
+end
+
+rule "Generate"
+    when
+        $individual : Individual( energy > 20, hasState("mating"), $position : position)
+        
+        not ActionDone( individual == $individual, actionType == "generated" )
+        
+        $adjacentPosition : Position() from $position.getAdjacentPositions()
+        
+        $otherIndividual : Individual( position.equals($adjacentPosition), energy > 20 )
+        
+        $world : World()
+        
+    then
+        System.out.println("Generating with " + $otherIndividual.toString());
+        
+        modify ( $world ) {
+        	generateEntityNear( "individual", $individual.position, $individual, $otherIndividual )
+        }
+
+        modify ( $individual ) {
+        	removeState("mating")
+        };
+
+        modify ( $individual ) {
+        	useEnergy( 20 )
+        }
+
+        modify ( $otherIndividual ) {
+        	useEnergy( 20 )
+        }
+
+		insert(	new ActionDone( $individual, "generated" ) );
 
 end
 

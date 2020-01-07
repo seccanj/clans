@@ -2,8 +2,9 @@ package org.seccanj.clans.model;
 
 public class RelativeCell extends Cell {
 
-	public Direction direction;
-	public double distance;
+	private Direction direction;
+	private double distance;
+	private boolean valid;
 
 	public RelativeCell() {
 		super();
@@ -25,5 +26,27 @@ public class RelativeCell extends Cell {
 		this.distance = distance;
 	}
 
-	
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
 }
