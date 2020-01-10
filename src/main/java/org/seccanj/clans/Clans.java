@@ -68,8 +68,8 @@ public class Clans extends GameApplication {
 
 	@Override
 	protected void initGame() {
-		createWorld();
 		initRuleEngine();
+		createWorld();
 	}
 	
 	@Override
@@ -117,17 +117,7 @@ public class Clans extends GameApplication {
 				Plant newPlant = (Plant) world.createEntityNear("plant", plant.getPosition());
 				
 				if (newPlant != null) {
-					kSession.insert(newPlant);
-	
-					Entity e = FXGL.entityBuilder()
-					        .type(BeingType.plant)
-					        .at(
-					        	Hexagons.getActualX(newPlant.getPosition()),
-					        	Hexagons.getActualY(newPlant.getPosition()))
-					        .viewWithBBox(new Circle(3, Color.GREEN))
-					        .buildAndAttach();
-	
-					plants.put(newPlant.getName(), e);
+					addBeingToContext(newPlant);
 				}
 			}
 		}
@@ -155,10 +145,48 @@ public class Clans extends GameApplication {
 		Set<Being> newBorns = world.getNewBorn();
 		
 		if (!newBorns.isEmpty()) {
-			newBorns.forEach(b -> kSession.insert(b));
+			System.out.println("   >>> Inserting new Being into context.");
+			newBorns.forEach(b -> addBeingToContext(b));
+		} else {
+			System.out.println("   >>> No new borns.");
 		}
 		
 		world.resetNewBorn();
+	}
+
+	private void addBeingToContext(Being b) {
+		BeingType beingType = BeingType.valueOf(b.getEntityTypeName());
+		Color color = getColorForBeingType(beingType);
+		
+		kSession.insert(b);
+		
+		Entity e = FXGL.entityBuilder()
+		        .type(beingType)
+		        .at(
+	        		Hexagons.getActualX(b.getPosition()),
+	        		Hexagons.getActualY(b.getPosition()))
+		        .viewWithBBox(new Circle(3, color))
+		        .buildAndAttach();
+
+		switch (beingType) {
+		case individual:
+			individuals.put(b.getName(), e);
+		case plant:
+			plants.put(b.getName(), e);
+		}
+	}
+	
+	private Color getColorForBeingType(BeingType beingType) {
+		switch (beingType) {
+		case individual:
+			return Color.RED;
+		case plant:
+			return Color.GREEN;
+		default:
+			break;
+		}
+		
+		return null;
 	}
 
 	private void initRuleEngine() {
@@ -168,19 +196,6 @@ public class Clans extends GameApplication {
 
 		kSession = kContainer.newKieSession("ksession-rules");
 
-		kSession.insert(world);
-
-		for (Being e : world.getEntities()) {
-			kSession.insert(e);
-			// kSession.insert(new Cell(e.getPosition(), e));
-		}
-		
-		QueryResults allPlants = kSession.getQueryResults("All Plants");
-		System.out.println("we have " + allPlants.size() + " Plants left");
-
-		QueryResults allIndividuals = kSession.getQueryResults("All Individuals");
-		System.out.println("we have " + allIndividuals.size() + " Individuals left");
-		
 		kSession.addEventListener(new DefaultAgendaEventListener() {
             //this event will be executed after the rule matches with the model data
             public void afterMatchFired(AfterMatchFiredEvent event) {
@@ -214,33 +229,19 @@ public class Clans extends GameApplication {
 		for (int i = 0; i < Configuration.NUM_INITIAL_INDIVIDUALS; i++) {
 			Individual individual = (Individual) world.createEntity("individual");
 
-			Entity e = FXGL.entityBuilder()
-		        .type(BeingType.individual)
-		        .at(
-	        		Hexagons.getActualX(individual.getPosition()),
-	        		Hexagons.getActualY(individual.getPosition()))
-		        .viewWithBBox(new Circle(3, Color.RED))
-		        .buildAndAttach();
-
-			individuals.put(individual.getName(), e);
+			addBeingToContext(individual);
 		}
 
 		for (int i = 0; i < Configuration.NUM_INITIAL_PLANTS; i++) {
 			Plant plant = (Plant) world.createEntity("plant");
 
-			Entity e = FXGL.entityBuilder()
-		        .type(BeingType.plant)
-		        .at(
-	        		Hexagons.getActualX(plant.getPosition()),
-	        		Hexagons.getActualY(plant.getPosition()))
-		        .viewWithBBox(new Circle(3, Color.GREEN))
-		        .buildAndAttach();
-
-			plants.put(plant.getName(), e);
+			addBeingToContext(plant);
 		}
 
 		System.out.println("  -- Individual entities: "+individuals.size());
 		System.out.println("  -- Plant entities: "+plants.size());
+
+		kSession.insert(world);
 		
 		return world;
 	}

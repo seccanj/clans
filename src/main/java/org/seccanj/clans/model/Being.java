@@ -11,4 +11,5 @@ public interface Being {
 	void resetActionPoints();
 	Dna getDna();
 	void setDna(Dna dna);
+	String getName();
 }
