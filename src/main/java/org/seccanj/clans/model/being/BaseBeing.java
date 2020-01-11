@@ -89,17 +89,17 @@ public abstract class BaseBeing implements Being {
 			this.energy = maxEnergy;
 		}
 		
-		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
+		//System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
 	}
 
 	@Override
 	public void useEnergy(double delta) {
 		if (energy >= delta) {
 			energy -= delta;
-			System.out.println("    --- Using energy: "+delta+". Energy left: "+energy);
+			//System.out.println("    --- Using energy: "+delta+". Energy left: "+energy);
 		} else {
 			energy = 0;
-			System.out.println("    --- Energy is 0");
+			//System.out.println("    --- Energy is 0");
 		}
 	}
 
@@ -117,17 +117,17 @@ public abstract class BaseBeing implements Being {
 	public void decreaseHealth(double delta) {
 		if (health > delta) {
 			this.health -= delta;
-			System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
+			//System.out.println("    --- Decreasing health: "+delta+". Health left: "+this.health);
 		} else {
 			health = 0;
-			System.out.println("    --- Health is 0");
+			//System.out.println("    --- Health is 0");
 		}
 	}
 
 	@Override
 	public void increaseHealth(double delta) {
 		this.health += delta;
-		System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
+		//System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
 	}
 
 	@Override

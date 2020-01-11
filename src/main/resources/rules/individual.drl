@@ -23,7 +23,7 @@ rule "Living" salience 10
         $world : World()
 
     then
-        System.out.println("Living: "+$individual.getName());
+        //System.out.println("Living: "+$individual.getName());
         
         modify ( $individual ) {
         	useActionPoints( 1 )
@@ -35,7 +35,7 @@ rule "Living" salience 10
 
 end
 
-rule "Find food" salience 50
+rule "Find food" salience 60
     when
         $individual : Individual( hasState("hungry"), target == null, $position : position )
 
@@ -83,7 +83,7 @@ rule "Move to target" salience 50
 
 end
 
-rule "Reached target" salience 50
+rule "Reached target" salience 65
     when
         $individual : Individual(hasState("moving"), target != null, position.isAdjacent(target.position))
 
@@ -102,7 +102,7 @@ end
 
 rule "Eat plant" salience 100
     when
-        $individual : Individual($position : position)
+        $individual : Individual( $position : position, hasState("hungry") )
         
         $adjacentPosition : Position() from $position.getAdjacentPositions()
         
@@ -185,7 +185,7 @@ end
 
 rule "Mating" salience 30
     when
-        $individual : Individual( age >= 100, !hasStates("mating", "moving", "hungry") )
+        $individual : Individual( age >= 100, !hasStates("mating", "moving", "hungry"), energy >= 200 )
         
         exists EndOfTurn( individual == $individual )
         
@@ -229,7 +229,7 @@ end
 
 rule "Generate" salience 30
     when
-        $individual : Individual( energy > 20, hasState("mating"), $position : position)
+        $individual : Individual( energy > 200, hasState("mating"), $position : position)
         
         not ActionDone( individual == $individual, actionType == "generated" )
         
@@ -269,7 +269,7 @@ rule "Individual end of turn" salience 80
         not EndOfTurn( individual == $individual )
 
     then
-        System.out.println("End of turn for "+$individual.toString());
+        // System.out.println("End of turn for "+$individual.toString());
 
         modify ( $individual ) {
         	useEnergy( 1 )
