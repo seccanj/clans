@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 public class Configuration {
 
 	public static int NUM_INITIAL_INDIVIDUALS = 50;
-	public static int NUM_INITIAL_PLANTS = 20;
+	public static int NUM_INITIAL_PLANTS = 100;
 	public static int NEAR_DISTANCE = 5;
 	public static int NEAR_DISTANCE_SQUARE = NEAR_DISTANCE * NEAR_DISTANCE;
 

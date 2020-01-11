@@ -12,6 +12,7 @@ import org.seccanj.clans.model.entities.Individual;
 import org.seccanj.clans.model.entities.Plant;
 import org.seccanj.clans.model.control.EndOfTurn;
 import org.seccanj.clans.model.control.ActionDone;
+import org.seccanj.clans.model.control.BeingFilterFactory;
 import org.seccanj.clans.util.Utils;
 
 
@@ -38,7 +39,7 @@ rule "Find food"
 
         $world : World()
         
-		$targetCell: RelativeCell( valid ) from $world.scanFirst2( "plant", $position, $individual.sightDistance )
+		$targetCell: RelativeCell( valid ) from $world.scanFirst2( BeingFilterFactory.getFilter("beingType", "plant"), $position, $individual.sightDistance )
 		
     then
         System.out.println("Setting target for "+$individual.toString());
@@ -180,7 +181,7 @@ end
 
 rule "Mating"
     when
-        $individual : Individual( age >= 100, !hasState("mating"), !hasState("moving"), !hasState("hungry") )
+        $individual : Individual( age >= 100, !hasStates("mating", "moving", "hungry") )
         
         exists EndOfTurn( individual == $individual )
         
@@ -205,7 +206,7 @@ rule "Find partner"
 
         $world : World()
         
-		$targetCell: RelativeCell( valid ) from $world.scanFirst2( "individual", $position, $individual.sightDistance )
+		$targetCell: RelativeCell( valid ) from $world.scanFirst2( BeingFilterFactory.getFilter("partner", $individual), $position, $individual.sightDistance )
 		
     then
         System.out.println("Setting mating target for "+$individual.toString());
@@ -230,7 +231,7 @@ rule "Generate"
         
         $adjacentPosition : Position() from $position.getAdjacentPositions()
         
-        $otherIndividual : Individual( position.equals($adjacentPosition), energy > 20 )
+        $otherIndividual : Individual( position.equals($adjacentPosition), energy > 200 )
         
         $world : World()
         
@@ -250,7 +251,7 @@ rule "Generate"
         }
 
         modify ( $otherIndividual ) {
-        	useEnergy( 20 )
+        	useEnergy( 200 )
         }
 
 		insert(	new ActionDone( $individual, "generated" ) );

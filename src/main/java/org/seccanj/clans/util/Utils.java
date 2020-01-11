@@ -3,7 +3,7 @@ package org.seccanj.clans.util;
 import java.util.Random;
 
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.BaseEntity;
+import org.seccanj.clans.model.Being;
 import org.seccanj.clans.model.Direction;
 import org.seccanj.clans.model.Position;
 import org.seccanj.clans.model.Direction.Directions;
@@ -50,7 +50,7 @@ public class Utils {
 		return (row >= 0 && row < Configuration.WORLD_MAX_ROWS && column >= 0 && column < Configuration.WORLD_MAX_COLUMNS);
 	}
 
-	public static String getRandomName(BaseEntity entity) {
+	public static String getRandomName(Being entity) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(entity.getClass().getName());

@@ -155,24 +155,26 @@ public class Clans extends GameApplication {
 	}
 
 	private void addBeingToContext(Being b) {
-		BeingType beingType = BeingType.valueOf(b.getEntityTypeName());
-		Color color = getColorForBeingType(beingType);
-		
-		kSession.insert(b);
-		
-		Entity e = FXGL.entityBuilder()
-		        .type(beingType)
-		        .at(
-	        		Hexagons.getActualX(b.getPosition()),
-	        		Hexagons.getActualY(b.getPosition()))
-		        .viewWithBBox(new Circle(3, color))
-		        .buildAndAttach();
-
-		switch (beingType) {
-		case individual:
-			individuals.put(b.getName(), e);
-		case plant:
-			plants.put(b.getName(), e);
+		if (b != null) {
+			BeingType beingType = BeingType.valueOf(b.getBeingTypeName());
+			Color color = getColorForBeingType(beingType);
+			
+			kSession.insert(b);
+			
+			Entity e = FXGL.entityBuilder()
+			        .type(beingType)
+			        .at(
+		        		Hexagons.getActualX(b.getPosition()),
+		        		Hexagons.getActualY(b.getPosition()))
+			        .viewWithBBox(new Circle(3, color))
+			        .buildAndAttach();
+	
+			switch (beingType) {
+			case individual:
+				individuals.put(b.getName(), e);
+			case plant:
+				plants.put(b.getName(), e);
+			}
 		}
 	}
 	
@@ -182,8 +184,6 @@ public class Clans extends GameApplication {
 			return Color.RED;
 		case plant:
 			return Color.GREEN;
-		default:
-			break;
 		}
 		
 		return null;

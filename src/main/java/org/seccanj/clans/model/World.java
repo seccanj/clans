@@ -11,6 +11,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.control.BeingFilter;
 import org.seccanj.clans.model.entities.EntityFactory;
 import org.seccanj.clans.util.Utils;
 
@@ -50,7 +51,7 @@ public class World {
 		return result;
 	}
 	
-	public Being generateEntityNear(String entityType, Position position, BaseEntity parent1, BaseEntity parent2) {
+	public Being generateEntityNear(String entityType, Position position, Being parent1, Being parent2) {
 		BaseEntity result = null;
 		
 		Position newPosition = getFreePositionNear(position);
@@ -63,7 +64,7 @@ public class World {
 			getNewBorn().add(result);
 //		} else {
 //			System.err.println("Unable to generate entity because no cell free near "+position.toString());
-		}		
+		}
 		
 		return result;
 	}
@@ -81,10 +82,6 @@ public class World {
 		}
 		
 		return null;
-	}
-	
-	public BaseEntity generate(BeingType entityType, BaseEntity parent1, BaseEntity parent2) {
-		return EntityFactory.createEntity(entityType, parent1, parent2);
 	}
 	
 	public Being getEntity(Position p) {
@@ -153,17 +150,16 @@ public class World {
 		return scanFirst(entityType, observer, Utils.getClosestDirection(dir), upToDistance);
 	}
 	
-	public RelativeCell scanFirst2(String entityType, Position observer, double upToDistance) {
+	public RelativeCell scanFirst2(BeingFilter beingFilter, Position observer, double upToDistance) {
 		System.out.println("  Scanning nearest entity...");
 		
 		RelativeCell result = new RelativeCell();
 		
 		try {
 			DistanceComparator d = new DistanceComparator(observer);
-			BeingType et = BeingType.valueOf(entityType);
 			
 			Optional<Being> optionalBeing = entities.stream()
-				.filter(e -> e.getEntityType() == et)
+				.filter(e -> beingFilter.filter(e))
 				.min(d);
 			
 			if (optionalBeing.isPresent()) {
@@ -203,7 +199,7 @@ public class World {
 				if (j < upToDistance) {
 					prevPos.move(nextDir.d, j);
 					Being e = getEntity(prevPos);
-					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
+					if (e != null && (entityType == null || entityType.equals(e.getBeingType().name()))) {
 						prevPos.move(nextDir.d, j-1);
 						result = new RelativeCell(prevPos, e, nextDir.d, j);
 						break;
@@ -213,7 +209,7 @@ public class World {
 				if (result == null) {
 					thisPos.move(lastDir.d, j);
 					Being e = getEntity(thisPos);
-					if (e != null && (entityType == null || entityType.equals(e.getEntityType().name()))) {
+					if (e != null && (entityType == null || entityType.equals(e.getBeingType().name()))) {
 						prevPos.move(lastDir.d, j-1);
 						result = new RelativeCell(prevPos, e, lastDir.d, j);
 						break;

@@ -1,12 +1,11 @@
 package org.seccanj.clans.model;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.seccanj.clans.model.Direction.Directions;
 import org.seccanj.clans.util.Utils;
-
-import com.google.gson.Gson;
 
 public abstract class BaseEntity implements Being {
 
@@ -52,10 +51,12 @@ public abstract class BaseEntity implements Being {
 	
 	protected abstract void initVitals();
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -65,14 +66,17 @@ public abstract class BaseEntity implements Being {
 		return position.clone();
 	}
 	
+	@Override
 	public double getEnergy() {
 		return energy;
 	}
 	
+	@Override
 	public void setEnergy(double energy) {
 		this.energy = energy;
 	}
 
+	@Override
 	public void addEnergy(double energy) {
 		this.energy += energy;
 		
@@ -83,6 +87,7 @@ public abstract class BaseEntity implements Being {
 		System.out.println("    --- Adding energy: "+energy+". Energy left: "+this.energy);
 	}
 
+	@Override
 	public void useEnergy(double delta) {
 		if (energy >= delta) {
 			energy -= delta;
@@ -93,14 +98,17 @@ public abstract class BaseEntity implements Being {
 		}
 	}
 
+	@Override
 	public double getHealth() {
 		return health;
 	}
 
+	@Override
 	public void setHealth(double health) {
 		this.health = health;
 	}
 
+	@Override
 	public void decreaseHealth(double delta) {
 		if (health > delta) {
 			this.health -= delta;
@@ -111,6 +119,7 @@ public abstract class BaseEntity implements Being {
 		}
 	}
 
+	@Override
 	public void increaseHealth(double delta) {
 		this.health += delta;
 		System.out.println("    --- Increasing health: "+delta+". Health left: "+this.health);
@@ -121,6 +130,7 @@ public abstract class BaseEntity implements Being {
 		setActionPoints(maxActionPoints);
 	}
 
+	@Override
 	public void useActionPoints(int points) {
 		if (getActionPoints() >= points) {
 			setActionPoints(getActionPoints() - points);
@@ -129,52 +139,70 @@ public abstract class BaseEntity implements Being {
 		}
 	}
 	
+	@Override
 	public Direction getDirection() {
 		return direction;
 	}
 
+	@Override
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
 	
+	@Override
 	public boolean hasState(String state) {
 		return states.contains(State.valueOf(state));
 	}
 
+	public boolean hasStates(String... stateNames) {
+		return Arrays.stream(stateNames)
+			.map(n -> State.valueOf(n))
+			.allMatch(s -> states.contains(s));
+	}
+
+	
+	
+	@Override
 	public void addState(String state) {
 		states.add(State.valueOf(state));
 	}
 
+	@Override
 	public void removeState(String state) {
 		states.remove(State.valueOf(state));
 	}
 
+	@Override
 	public int getMaxSpeed() {
 		return maxSpeed;
 	}
 
+	@Override
 	public void setMaxSpeed(int maxSpeed) {
 		this.maxSpeed = maxSpeed;
 	}
 
+	@Override
 	public int getSpeed() {
 		return speed;
 	}
 
+	@Override
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 	
 	@Override
-	public BeingType getEntityType() {
+	public BeingType getBeingType() {
 		return entityType;
 	}
 
 	@Override
-	public String getEntityTypeName() {
+	public String getBeingTypeName() {
 		return entityType.name();
 	}
 
+	@Override
 	public void setEntityType(BeingType entityType) {
 		this.entityType = entityType;
 	}
@@ -191,11 +219,13 @@ public abstract class BaseEntity implements Being {
 		return move(distance);
 	}
 
+	@Override
 	public boolean move(Direction d, int distance) {
 		direction = d;
 		return move(distance);
 	}
 	
+	@Override
 	public boolean move(int distance) {
 		boolean moved = false;
 		int trials = 0;
@@ -216,26 +246,32 @@ public abstract class BaseEntity implements Being {
 		return moved;
 	}
 
+	@Override
 	public Direction pickRandomDirection() {
 		return Directions.directions[(int)Math.floor(Math.random() * 6)].d;
 	}
 	
+	@Override
 	public Directions pickRandomDirections() {
 		return Directions.directions[(int)Math.floor(Math.random() * 6)];
 	}
 	
+	@Override
 	public long getBirthTurn() {
 		return birthTurn;
 	}
 
+	@Override
 	public void setBirthTurn(long birthTurn) {
 		this.birthTurn = birthTurn;
 	}
 	
+	@Override
 	public void addTurn() {
 		age++;
 	}
 	
+	@Override
 	public long getAge() {
 		return age;
 	}
@@ -250,73 +286,89 @@ public abstract class BaseEntity implements Being {
 		this.dna = dna;
 	}
 
+	@Override
 	public Set<State> getStates() {
 		return states;
 	}
 
+	@Override
 	public void setStates(Set<State> states) {
 		this.states = states;
 	}
 
+	@Override
 	public void setPosition(Position position) {
 		this.position = position;
 	}
 	
+	@Override
 	public int getMaxActionPoints() {
 		return maxActionPoints;
 	}
 
+	@Override
 	public void setMaxActionPoints(int maxActionPoints) {
 		this.maxActionPoints = maxActionPoints;
 	}
 
+	@Override
 	public double getMaxEnergy() {
 		return maxEnergy;
 	}
 
+	@Override
 	public void setMaxEnergy(double maxEnergy) {
 		this.maxEnergy = maxEnergy;
 	}
 
+	@Override
 	public double getMaxHealth() {
 		return maxHealth;
 	}
 
+	@Override
 	public void setMaxHealth(double maxHealth) {
 		this.maxHealth = maxHealth;
 	}
 
+	@Override
 	public int getActionPoints() {
 		return actionPoints;
 	}
 
+	@Override
 	public void setActionPoints(int actionPoints) {
 		this.actionPoints = actionPoints;
 	}
 
 	@Override
-	public String toString() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
-
 	public double getMaxSightDistance() {
 		return maxSightDistance;
 	}
 
+	@Override
 	public void setMaxSightDistance(double maxSightDistance) {
 		this.maxSightDistance = maxSightDistance;
 	}
 
+	@Override
 	public double getSightDistance() {
 		return sightDistance;
 	}
 
+	@Override
 	public void setSightDistance(double sightDistance) {
 		this.sightDistance = sightDistance;
 	}
 
+	@Override
 	public void setAge(long age) {
 		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		//Gson gson = new Gson();
+		return getName(); //gson.toJson(this);
 	}
 }
