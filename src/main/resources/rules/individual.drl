@@ -1,24 +1,24 @@
 import org.seccanj.clans.ClansJavaFx;
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.Being;
-import org.seccanj.clans.model.Cell;
-import org.seccanj.clans.model.RelativeCell;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.movement.Cell;
+import org.seccanj.clans.model.movement.RelativeCell;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.Position;
-import org.seccanj.clans.model.Direction;
-import org.seccanj.clans.model.Food;
-import org.seccanj.clans.model.Direction.Directions;
-import org.seccanj.clans.model.entities.Individual;
-import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.being.Food;
+import org.seccanj.clans.model.movement.Direction.Directions;
+import org.seccanj.clans.model.being.Individual;
+import org.seccanj.clans.model.being.Plant;
 import org.seccanj.clans.model.control.EndOfTurn;
 import org.seccanj.clans.model.control.ActionDone;
 import org.seccanj.clans.model.control.BeingFilterFactory;
 import org.seccanj.clans.util.Utils;
 
 
-rule "Living"
+rule "Living" salience 10
     when
-        $individual : Individual( actionPoints >= 1, target == null )
+        $individual : Individual( actionPoints >= 1 )
         
         $world : World()
 
@@ -29,9 +29,13 @@ rule "Living"
         	useActionPoints( 1 )
         };
 
+        modify ( $individual ) {
+        	useEnergy( 1 )
+        };
+
 end
 
-rule "Find food"
+rule "Find food" salience 50
     when
         $individual : Individual( hasState("hungry"), target == null, $position : position )
 
@@ -56,7 +60,7 @@ rule "Find food"
 
 end
 
-rule "Move to target"
+rule "Move to target" salience 50
     when
         $individual : Individual(actionPoints >= 5, energy >= maxSpeed / 2, hasState("moving"), target != null, $position : position, $target : target)
 
@@ -79,7 +83,7 @@ rule "Move to target"
 
 end
 
-rule "Reached target"
+rule "Reached target" salience 50
     when
         $individual : Individual(hasState("moving"), target != null, position.isAdjacent(target.position))
 
@@ -96,7 +100,7 @@ rule "Reached target"
 
 end
 
-rule "Eat plant"
+rule "Eat plant" salience 100
     when
         $individual : Individual($position : position)
         
@@ -125,7 +129,7 @@ rule "Eat plant"
 
 end
 
-rule "Starvation"
+rule "Starvation" salience 70
     when
         $individual : Individual( energy <= (maxEnergy * 4 / 5) )
         
@@ -156,7 +160,7 @@ rule "Starvation"
 
 end
 
-rule "Recovering"
+rule "Recovering" salience 70
     when
         $individual : Individual( health < maxHealth, energy >= maxEnergy / 2 )
         
@@ -179,7 +183,7 @@ rule "Recovering"
 
 end
 
-rule "Mating"
+rule "Mating" salience 30
     when
         $individual : Individual( age >= 100, !hasStates("mating", "moving", "hungry") )
         
@@ -198,7 +202,7 @@ rule "Mating"
 
 end
 
-rule "Find partner"
+rule "Find partner" salience 30
     when
         $individual : Individual( hasState("mating"), target == null, $position : position )
 
@@ -223,7 +227,7 @@ rule "Find partner"
 
 end
 
-rule "Generate"
+rule "Generate" salience 30
     when
         $individual : Individual( energy > 20, hasState("mating"), $position : position)
         
@@ -258,7 +262,7 @@ rule "Generate"
 
 end
 
-rule "Individual end of turn"
+rule "Individual end of turn" salience 80
     when
         $individual : Individual( actionPoints == 0 || energy <= 0 )
         
@@ -275,7 +279,7 @@ rule "Individual end of turn"
 
 end
 
-rule "Teardown"
+rule "Teardown" salience 100
     when
         $individual : Individual( health <= 0 )
 

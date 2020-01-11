@@ -1,13 +1,18 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.being;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.State;
+import org.seccanj.clans.model.World;
+import org.seccanj.clans.model.dna.Dna;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.Direction.Directions;
 import org.seccanj.clans.util.Utils;
 
-public abstract class BaseEntity implements Being {
+public abstract class BaseBeing implements Being {
 
 	public BeingType entityType;
 	public Dna dna = new Dna();
@@ -34,7 +39,7 @@ public abstract class BaseEntity implements Being {
 	public double maxSightDistance;
 	public double sightDistance;
 	
-	public BaseEntity(Dna dna) {
+	public BaseBeing(Dna dna) {
 		this.dna = dna;
 	}
 

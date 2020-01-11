@@ -1,6 +1,6 @@
 package org.seccanj.clans.gui;
 
-import org.seccanj.clans.model.Position;
+import org.seccanj.clans.model.movement.Position;
 
 public class Sprite {
 

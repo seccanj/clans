@@ -1,10 +1,10 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.dna;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.seccanj.clans.model.Gene.GeneType;
+import org.seccanj.clans.model.dna.Gene.GeneType;
 
 public class Dna {
 	

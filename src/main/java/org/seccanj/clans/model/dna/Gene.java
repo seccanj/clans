@@ -1,11 +1,11 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.dna;
 
 import org.seccanj.clans.util.Utils;
 
 public class Gene {
 
 	public enum GeneType {
-		plantSplitPeriod(100),
+		plantSplitPeriod(50),
 		sightDistance(150),
 		maxEnergy(500),
 		maxHealth(100),

@@ -13,8 +13,8 @@ import org.seccanj.clans.engine.EngineServiceOld;
 import org.seccanj.clans.gui.FrameRate;
 import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
-import org.seccanj.clans.model.Being;
 import org.seccanj.clans.model.World;
+import org.seccanj.clans.model.being.Being;
 
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.GaugeBuilder;

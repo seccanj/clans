@@ -1,12 +1,9 @@
-package org.seccanj.clans.model.entities;
+package org.seccanj.clans.model.being;
 
-import org.seccanj.clans.model.BaseEntity;
-import org.seccanj.clans.model.Dna;
-import org.seccanj.clans.model.BeingType;
-import org.seccanj.clans.model.Food;
-import org.seccanj.clans.model.Gene.GeneType;
+import org.seccanj.clans.model.dna.Dna;
+import org.seccanj.clans.model.dna.Gene.GeneType;
 
-public class Plant extends BaseEntity implements Food {
+public class Plant extends BaseBeing implements Food {
 
 	private int splitPeriod;
 	

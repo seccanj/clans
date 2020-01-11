@@ -3,10 +3,10 @@ package org.seccanj.clans.util;
 import java.util.Random;
 
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.Being;
-import org.seccanj.clans.model.Direction;
-import org.seccanj.clans.model.Position;
-import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.Direction.Directions;
 
 public class Utils {
 

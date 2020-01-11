@@ -1,4 +1,4 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.being;
 
 public enum BeingType {
 

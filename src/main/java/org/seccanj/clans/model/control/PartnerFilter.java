@@ -1,8 +1,8 @@
 package org.seccanj.clans.model.control;
 
-import org.seccanj.clans.model.Being;
-import org.seccanj.clans.model.BeingType;
-import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.being.BeingType;
+import org.seccanj.clans.model.being.Individual;
 
 public class PartnerFilter implements BeingFilter {
 

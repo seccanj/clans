@@ -1,13 +1,10 @@
-package org.seccanj.clans.model.entities;
+package org.seccanj.clans.model.being;
 
-import org.seccanj.clans.model.BaseEntity;
-import org.seccanj.clans.model.Dna;
-import org.seccanj.clans.model.BeingType;
-import org.seccanj.clans.model.Food;
-import org.seccanj.clans.model.Gene.GeneType;
-import org.seccanj.clans.model.RelativeCell;
+import org.seccanj.clans.model.dna.Dna;
+import org.seccanj.clans.model.dna.Gene.GeneType;
+import org.seccanj.clans.model.movement.RelativeCell;
 
-public class Individual extends BaseEntity implements Food {
+public class Individual extends BaseBeing implements Food {
 
 	public enum Gender {
 		male,

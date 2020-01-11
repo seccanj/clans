@@ -3,7 +3,7 @@ package org.seccanj.clans.gui;
 import java.util.Arrays;
 
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.Position;
+import org.seccanj.clans.model.movement.Position;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

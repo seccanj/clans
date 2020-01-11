@@ -1,9 +1,10 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.movement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.seccanj.clans.configuration.Configuration;
+import org.seccanj.clans.model.World;
 
 public class Position {
 

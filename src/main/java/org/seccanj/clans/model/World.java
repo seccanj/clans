@@ -10,9 +10,17 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.being.BaseBeing;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.being.BeingFactory;
+import org.seccanj.clans.model.being.BeingType;
 import org.seccanj.clans.model.control.BeingFilter;
-import org.seccanj.clans.model.entities.EntityFactory;
+import org.seccanj.clans.model.movement.Cell;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.movement.DistanceComparator;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.RelativeCell;
+import org.seccanj.clans.model.movement.Direction.Directions;
 import org.seccanj.clans.util.Utils;
 
 public class World {
@@ -23,6 +31,7 @@ public class World {
 	
 	private Set<Being> entities = new HashSet<Being>();
 	private Set<Being> newBorn = new HashSet<Being>();
+	private Set<Being> dead = new HashSet<Being>();
 	
 	public long currentTurn = 0;
 
@@ -35,12 +44,12 @@ public class World {
 	}
 	
 	public Being createEntityNear(String entityType, Position position) {
-		BaseEntity result = null;
+		BaseBeing result = null;
 		
 		Position newPosition = getFreePositionNear(position);
 		
 		if (newPosition != null) {
-			result = EntityFactory.createEntity(BeingType.valueOf(entityType));
+			result = BeingFactory.createEntity(BeingType.valueOf(entityType));
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			setEntity(newPosition, result);
@@ -52,12 +61,12 @@ public class World {
 	}
 	
 	public Being generateEntityNear(String entityType, Position position, Being parent1, Being parent2) {
-		BaseEntity result = null;
+		BaseBeing result = null;
 		
 		Position newPosition = getFreePositionNear(position);
 		
 		if (newPosition != null) {
-			result = EntityFactory.createEntity(BeingType.valueOf(entityType), parent1, parent2);
+			result = BeingFactory.createEntity(BeingType.valueOf(entityType), parent1, parent2);
 			result.init(Utils.getRandomName(result), newPosition, currentTurn);
 			
 			setEntity(newPosition, result);
@@ -140,6 +149,8 @@ public class World {
 	public void removeEntity(Being e) {
 		map[e.getPosition().row][e.getPosition().column] = null;
 		entities.remove(e);
+
+		dead.add(e);
 	}
 
 	public RelativeCell scanFirst(Position observer, Direction dir, double upToDistance) {
@@ -298,6 +309,18 @@ public class World {
 
 	public void resetNewBorn() {
 		newBorn.clear();
+	}
+
+	public Set<Being> getDead() {
+		return dead;
+	}
+
+	public void setDead(Set<Being> dead) {
+		this.dead = dead;
+	}
+
+	public void resetDead() {
+		dead.clear();
 	}
 
 }

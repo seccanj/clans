@@ -1,7 +1,8 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.movement;
 
 import java.util.Comparator;
 
+import org.seccanj.clans.model.being.Being;
 import org.seccanj.clans.util.Utils;
 
 public class DistanceComparator implements Comparator<Being>{

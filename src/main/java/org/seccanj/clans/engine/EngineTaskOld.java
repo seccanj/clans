@@ -10,8 +10,8 @@ import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Sprite;
 import org.seccanj.clans.gui.Sprite.SpriteType;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.entities.Individual;
-import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.being.Individual;
+import org.seccanj.clans.model.being.Plant;
 
 import javafx.concurrent.Task;
 

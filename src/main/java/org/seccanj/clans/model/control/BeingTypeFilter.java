@@ -1,7 +1,7 @@
 package org.seccanj.clans.model.control;
 
-import org.seccanj.clans.model.Being;
-import org.seccanj.clans.model.BeingType;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.being.BeingType;
 
 public class BeingTypeFilter implements BeingFilter {
 

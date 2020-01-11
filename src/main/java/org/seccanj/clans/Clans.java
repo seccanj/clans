@@ -15,11 +15,11 @@ import org.seccanj.clans.configuration.Configuration;
 import org.seccanj.clans.gui.FrameRate;
 import org.seccanj.clans.gui.GuiContext;
 import org.seccanj.clans.gui.Hexagons;
-import org.seccanj.clans.model.Being;
-import org.seccanj.clans.model.BeingType;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.entities.Individual;
-import org.seccanj.clans.model.entities.Plant;
+import org.seccanj.clans.model.being.Being;
+import org.seccanj.clans.model.being.BeingType;
+import org.seccanj.clans.model.being.Individual;
+import org.seccanj.clans.model.being.Plant;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -136,12 +136,12 @@ public class Clans extends GameApplication {
 
 		removeActionDones();
 
-		insertNewBorns();
+		handleBirthsAndDeaths();
 		
 		updateGauges(guiContext);
 	}
 	
-	private void insertNewBorns() {
+	private void handleBirthsAndDeaths() {
 		Set<Being> newBorns = world.getNewBorn();
 		
 		if (!newBorns.isEmpty()) {
@@ -152,6 +152,17 @@ public class Clans extends GameApplication {
 		}
 		
 		world.resetNewBorn();
+
+		Set<Being> dead = world.getDead();
+		
+		if (!dead.isEmpty()) {
+			System.out.println("   >>> Removing dead Being from context.");
+			dead.forEach(b -> removeBeingFromContext(b));
+		} else {
+			System.out.println("   >>> No dead.");
+		}
+		
+		world.resetDead();
 	}
 
 	private void addBeingToContext(Being b) {
@@ -174,6 +185,24 @@ public class Clans extends GameApplication {
 				individuals.put(b.getName(), e);
 			case plant:
 				plants.put(b.getName(), e);
+			}
+		}
+	}
+	
+	private void removeBeingFromContext(Being b) {
+		if (b != null) {
+			BeingType beingType = BeingType.valueOf(b.getBeingTypeName());
+			Entity e = null;
+			
+			switch (beingType) {
+			case individual:
+				e = individuals.remove(b.getName());
+			case plant:
+				e = plants.remove(b.getName());
+			}
+		
+			if (e != null) {
+				e.removeFromWorld();
 			}
 		}
 	}

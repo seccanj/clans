@@ -1,6 +1,6 @@
 package org.seccanj.clans.model.control;
 
-import org.seccanj.clans.model.entities.Individual;
+import org.seccanj.clans.model.being.Individual;
 
 public class EndOfTurn {
 

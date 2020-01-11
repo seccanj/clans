@@ -1,8 +1,12 @@
-package org.seccanj.clans.model;
+package org.seccanj.clans.model.being;
 
 import java.util.Set;
 
-import org.seccanj.clans.model.Direction.Directions;
+import org.seccanj.clans.model.State;
+import org.seccanj.clans.model.dna.Dna;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.Direction.Directions;
 
 public interface Being {
 
