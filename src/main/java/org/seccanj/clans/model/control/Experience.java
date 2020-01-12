@@ -103,7 +103,7 @@ public class Experience {
 			.allMatch(c -> characteristics.contains(c));
 	}
 
-	public boolean hasCharacteristicsAsSet(Set<String> chars) {
+	public boolean hasCharacteristics(Set<String> chars) {
 		return characteristics.containsAll(chars);
 	}
 

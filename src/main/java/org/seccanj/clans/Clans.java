@@ -20,6 +20,7 @@ import org.seccanj.clans.model.being.Being;
 import org.seccanj.clans.model.being.BeingType;
 import org.seccanj.clans.model.being.Individual;
 import org.seccanj.clans.model.being.Plant;
+import org.seccanj.clans.model.control.Parent;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -146,7 +147,10 @@ public class Clans extends GameApplication {
 		
 		if (!newBorns.isEmpty()) {
 			System.out.println("   >>> Inserting new Being into context.");
-			newBorns.forEach(b -> addBeingToContext(b));
+			newBorns.forEach(b -> {
+				addBeingToContext(b);
+				addParentFacts(b);
+			});
 		} else {
 			System.out.println("   >>> No new borns.");
 		}
@@ -165,10 +169,21 @@ public class Clans extends GameApplication {
 		world.resetDead();
 	}
 
+	private void addParentFacts(Being b) {
+		if (b.getBeingType() == BeingType.individual) {
+			Individual individual = (Individual)b;
+			
+			if (individual.getParents() != null && individual.getParents().size() > 0) {
+				individual.getParents().stream()
+					.forEach(p -> kSession.insert(new Parent(p, individual)));
+			}
+		}
+	}
+
 	private void addBeingToContext(Being b) {
 		if (b != null) {
 			BeingType beingType = BeingType.valueOf(b.getBeingTypeName());
-			Color color = getColorForBeingType(beingType);
+			Color color = getColorForBeing(b);
 			
 			kSession.insert(b);
 			
@@ -207,12 +222,12 @@ public class Clans extends GameApplication {
 		}
 	}
 	
-	private Color getColorForBeingType(BeingType beingType) {
-		switch (beingType) {
+	private Color getColorForBeing(Being b) {
+		switch (b.getBeingType()) {
 		case individual:
 			return Color.RED;
 		case plant:
-			return Color.GREEN;
+			return b.hasCharacteristics("red", "bitter") ? Color.PURPLE : Color.GREEN;
 		}
 		
 		return null;

@@ -1,5 +1,9 @@
 package org.seccanj.clans.model.being;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.seccanj.clans.model.control.ActionDone;
 import org.seccanj.clans.model.dna.Dna;
 import org.seccanj.clans.model.dna.Gene.GeneType;
@@ -22,6 +26,8 @@ public class Individual extends BaseBeing implements Food {
 	
 	public Gender gender;
 	public RelativeCell target;
+	
+	private Set<Individual> parents = new HashSet<>();
 
 	public Individual() {
 		this(getDefaultDna());
@@ -31,6 +37,11 @@ public class Individual extends BaseBeing implements Food {
 		super(dna);
 		setEntityType(BeingType.individual);
 		gender = Gender.getRandom();
+	}	
+	
+	public Individual(Dna dna, Individual... parents) {
+		this(dna);
+		setParents(parents);
 	}	
 	
 	@Override
@@ -106,4 +117,17 @@ public class Individual extends BaseBeing implements Food {
 	public double getFoodHealth() {
 		return 0;
 	}
+
+	public Set<Individual> getParents() {
+		return parents;
+	}
+
+	public void setParents(Set<Individual> parents) {
+		this.parents = parents;
+	}
+
+	public void setParents(Individual... parents) {
+		this.parents.addAll(Arrays.asList(parents));
+	}
+
 }

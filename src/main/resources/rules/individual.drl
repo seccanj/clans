@@ -13,6 +13,7 @@ import org.seccanj.clans.model.control.ActionDone;
 import org.seccanj.clans.model.control.BeingFilterFactory;
 import org.seccanj.clans.model.control.EndOfTurn;
 import org.seccanj.clans.model.control.Experience;
+import org.seccanj.clans.model.control.Parent;
 import org.seccanj.clans.util.Utils;
 
 
@@ -111,7 +112,7 @@ rule "Eat poisoned plant"
         
         $plant : Plant( position.equals($adjacentPosition), hasCharacteristics('red', 'bitter'), $plantPosition : position )
         
-        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristicsAsSet( $plant.getCharacteristics() ) )
+        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristics( $plant.getCharacteristics() ) )
         
         $world : World()
         
@@ -149,7 +150,7 @@ rule "Eat plant"
         
         $plant : Plant( position.equals($adjacentPosition), $plantPosition : position )
         
-        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristicsAsSet( $plant.getCharacteristics() ) )
+        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristics( $plant.getCharacteristics() ) )
         
         $world : World()
         
@@ -364,6 +365,24 @@ rule "Generate" salience 30
 
 		insert(	new ActionDone( $individual, "generate" ) );
 
+end
+
+rule "Tutoring" salience 20
+    when
+    	$individual : Individual()
+    	
+        $parent : Parent( child == $individual )
+        
+		Experience ( bearer == $parent.parent, $good : good, $actionTypeName : actionTypeName, $characteristics : characteristics )
+
+		not Experience ( bearer == $individual, good == $good, actionTypeName == $actionTypeName, hasCharacteristics( $characteristics ) )
+        
+        exists EndOfTurn( individual == $individual )
+
+    then
+        System.out.println("Tutoring from parent "+$parent.getParent().getName()+" to child "+$individual.toString());
+
+		insert(	new Experience( $good, $individual, $actionTypeName, $characteristics ) );
 end
 
 rule "Individual end of turn" salience 80

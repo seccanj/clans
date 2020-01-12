@@ -21,7 +21,7 @@ public class BeingFactory {
 		
 		switch (entityType) {
 		case individual:
-			return new Individual(dna);
+			return new Individual(dna, (Individual)parent1, (Individual)parent2);
 		case plant:
 			return new Plant(dna);
 		default:
