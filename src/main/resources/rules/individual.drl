@@ -1,18 +1,18 @@
-import org.seccanj.clans.ClansJavaFx;
 import org.seccanj.clans.configuration.Configuration;
-import org.seccanj.clans.model.being.Being;
-import org.seccanj.clans.model.movement.Cell;
-import org.seccanj.clans.model.movement.RelativeCell;
 import org.seccanj.clans.model.World;
-import org.seccanj.clans.model.movement.Position;
-import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.being.Being;
 import org.seccanj.clans.model.being.Food;
-import org.seccanj.clans.model.movement.Direction.Directions;
 import org.seccanj.clans.model.being.Individual;
 import org.seccanj.clans.model.being.Plant;
-import org.seccanj.clans.model.control.EndOfTurn;
+import org.seccanj.clans.model.movement.Cell;
+import org.seccanj.clans.model.movement.Direction;
+import org.seccanj.clans.model.movement.Direction.Directions;
+import org.seccanj.clans.model.movement.Position;
+import org.seccanj.clans.model.movement.RelativeCell;
 import org.seccanj.clans.model.control.ActionDone;
 import org.seccanj.clans.model.control.BeingFilterFactory;
+import org.seccanj.clans.model.control.EndOfTurn;
+import org.seccanj.clans.model.control.Experience;
 import org.seccanj.clans.util.Utils;
 
 
@@ -39,7 +39,7 @@ rule "Find food" salience 60
     when
         $individual : Individual( hasState("hungry"), target == null, $position : position )
 
-        not ActionDone( individual == $individual, actionType == "setTarget" )
+        not ActionDone( being == $individual, actionTypeName == "setTarget" )
 
         $world : World()
         
@@ -100,7 +100,48 @@ rule "Reached target" salience 65
 
 end
 
-rule "Eat plant" salience 100
+rule "Eat poisoned plant" 
+	salience 100
+    activation-group "eating"
+    
+    when
+        $individual : Individual( $position : position, hasState("hungry") )
+        
+        $adjacentPosition : Position() from $position.getAdjacentPositions()
+        
+        $plant : Plant( position.equals($adjacentPosition), hasCharacteristics('red', 'bitter'), $plantPosition : position )
+        
+        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristicsAsSet( $plant.getCharacteristics() ) )
+        
+        $world : World()
+        
+    then
+        System.out.println("Eating poisoned plant. Individual: "+$individual.getName()+", plant position: "+$plantPosition.toString());
+        
+        modify ( $individual ) {
+        	eat( $plant )
+        }
+
+		insert ( $individual.getLastActionDone() );
+
+        modify ( $individual ) {
+        	decreaseHealth( $plant.getFoodHealth() )
+        }
+
+		insert ( $individual.getLastActionDone() );
+
+        modify ( $world ) {
+        	removeEntity( $plant )
+        }
+
+		delete ( $plant );
+
+end
+
+rule "Eat plant"
+	salience 95
+    activation-group "eating"
+
     when
         $individual : Individual( $position : position, hasState("hungry") )
         
@@ -108,40 +149,47 @@ rule "Eat plant" salience 100
         
         $plant : Plant( position.equals($adjacentPosition), $plantPosition : position )
         
+        not Experience( bearer == $individual, actionTypeName == "eat", !good, hasCharacteristicsAsSet( $plant.getCharacteristics() ) )
+        
         $world : World()
         
     then
-        System.out.println("Eating plant in "+$plantPosition.toString());
+        System.out.println("Eating plant. Individual: "+$individual.getName()+", plant position: "+$plantPosition.toString());
         
         modify ( $individual ) {
         	eat( $plant )
         }
 
+		insert ( $individual.getLastActionDone() );
+
         modify ( $individual ) {
-        	addEnergy( $plant.energy )
+        	removeState( "hungry" )
         }
 
         modify ( $world ) {
         	removeEntity( $plant )
         }
 
-		delete ( $plant )
+		delete ( $plant );
 
 end
 
-rule "Starvation" salience 70
+rule "Starvation" 
+	salience 72
+	activation-group "health"
+	
     when
-        $individual : Individual( energy <= (maxEnergy * 4 / 5) )
+        $individual : Individual( energy <= (maxEnergy * 2 / 5) )
         
         exists EndOfTurn( individual == $individual )
         
-        not ActionDone( individual == $individual, actionType == "starvation" )
+        not ActionDone( being == $individual, actionTypeName == "starving" )
 
     then
-        System.out.println("Starving "+$individual.toString());
+        System.out.println("Becoming hungry "+$individual.toString());
 
         modify ( $individual ) {
-        	decreaseHealth( 1 )
+        	decreaseHealth( 3 )
         };
 
         modify ( $individual ) {
@@ -156,23 +204,60 @@ rule "Starvation" salience 70
         	setTarget( null )
         };
 
-		insert(	new ActionDone( $individual, "starvation" ) );
+		insert(	new ActionDone( $individual, "starving" ) );
 
 end
 
-rule "Recovering" salience 70
+rule "Hungry" 
+	salience 70
+	activation-group "health"
+	
     when
-        $individual : Individual( health < maxHealth, energy >= maxEnergy / 2 )
+        $individual : Individual( energy <= (maxEnergy * 3 / 5), !hasState('hungry') )
         
         exists EndOfTurn( individual == $individual )
         
-        not ActionDone( individual == $individual, actionType == "recovering" )
+        not ActionDone( being == $individual, actionTypeName == "starving" )
+
+    then
+        System.out.println("Starving "+$individual.toString());
+
+        modify ( $individual ) {
+        	removeState( "moving" )
+        };
+
+        modify ( $individual ) {
+        	removeState( "mating" )
+        };
+
+        modify ( $individual ) {
+        	addState( "hungry" )
+        };
+
+        modify ( $individual ) {
+        	setTarget( null )
+        };
+
+		insert(	new ActionDone( $individual, "starving" ) );
+
+end
+
+rule "Recovering" 
+	salience 68
+	activation-group "health"
+	
+    when
+        $individual : Individual( health < maxHealth, energy >= (maxEnergy * 3 / 5) )
+        
+        exists EndOfTurn( individual == $individual )
+        
+        not ActionDone( being == $individual, actionTypeName == "recovering" )
 
     then
         System.out.println("Recovering "+$individual.toString());
 
         modify ( $individual ) {
-        	increaseHealth( 1 )
+        	increaseHealth( 2 )
         };
 
         modify ( $individual ) {
@@ -183,13 +268,32 @@ rule "Recovering" salience 70
 
 end
 
+rule "Learn" salience 30
+    when
+        $cause : ActionDone( actionTypeName == "eat", $individual : being, $causeTurn : turn )
+        
+        $effect : ActionDone( actionTypeName == "decreaseHealth", being == $individual, turn >= $causeTurn && turn < $causeTurn + 2 )
+        
+        exists EndOfTurn( individual == $individual )
+        
+        not ActionDone( being == $individual, actionTypeName == "learn" )
+
+    then
+        System.out.println("Learning "+$individual.toString());
+
+		insert(	new Experience( false, $individual, "eat", $cause.getCharacteristics() ) );
+
+		insert(	new ActionDone( $individual, "mating" ) );
+
+end
+
 rule "Mating" salience 30
     when
         $individual : Individual( age >= 100, !hasStates("mating", "moving", "hungry"), energy >= 200 )
         
         exists EndOfTurn( individual == $individual )
         
-        not ActionDone( individual == $individual, actionType == "mating" )
+        not ActionDone( being == $individual, actionTypeName == "mating" )
 
     then
         System.out.println("Mating "+$individual.toString());
@@ -206,7 +310,7 @@ rule "Find partner" salience 30
     when
         $individual : Individual( hasState("mating"), target == null, $position : position )
 
-        not ActionDone( individual == $individual, actionType == "setTarget" )
+        not ActionDone( being == $individual, actionTypeName == "setTarget" )
 
         $world : World()
         
@@ -231,7 +335,7 @@ rule "Generate" salience 30
     when
         $individual : Individual( energy > 200, hasState("mating"), $position : position)
         
-        not ActionDone( individual == $individual, actionType == "generated" )
+        not ActionDone( being == $individual, actionTypeName == "generate" )
         
         $adjacentPosition : Position() from $position.getAdjacentPositions()
         
@@ -258,7 +362,7 @@ rule "Generate" salience 30
         	useEnergy( 200 )
         }
 
-		insert(	new ActionDone( $individual, "generated" ) );
+		insert(	new ActionDone( $individual, "generate" ) );
 
 end
 
@@ -279,7 +383,7 @@ rule "Individual end of turn" salience 80
 
 end
 
-rule "Teardown" salience 100
+rule "Death" salience 100
     when
         $individual : Individual( health <= 0 )
 

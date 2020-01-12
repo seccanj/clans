@@ -1,5 +1,6 @@
 package org.seccanj.clans.model.being;
 
+import org.seccanj.clans.model.control.ActionDone;
 import org.seccanj.clans.model.dna.Dna;
 import org.seccanj.clans.model.dna.Gene.GeneType;
 import org.seccanj.clans.model.movement.RelativeCell;
@@ -23,9 +24,7 @@ public class Individual extends BaseBeing implements Food {
 	public RelativeCell target;
 
 	public Individual() {
-		super(getDefaultDna());
-		setEntityType(BeingType.individual);
-		gender = Gender.getRandom();
+		this(getDefaultDna());
 	}
 
 	public Individual(Dna dna) {
@@ -60,9 +59,24 @@ public class Individual extends BaseBeing implements Food {
 	}
 
 	public void eat(Food food) {
-		System.out.println("   --- Eating "+food.getEnergy());
+		double foodEnergy = food.getFoodEnergy();
+		
+		System.out.println("   --- Eating "+foodEnergy);
+		
+		addEnergy(foodEnergy);
+		
+		getActionLog().add(new ActionDone(this, "eat", food.getCharacteristics()));
 	}
 
+	@Override
+	public void decreaseHealth(double delta) {
+		super.decreaseHealth(delta);
+
+		if (delta > 10) {
+			getActionLog().add(new ActionDone(this, "decreaseHealth"));
+		}
+	}
+	
 	public RelativeCell getTarget() {
 		return target;
 	}
@@ -81,5 +95,15 @@ public class Individual extends BaseBeing implements Food {
 		result.put(GeneType.maxSpeed, GeneType.maxSpeed.getGene());
 
 		return result;
+	}
+
+	@Override
+	public double getFoodEnergy() {
+		return getEnergy();
+	}
+
+	@Override
+	public double getFoodHealth() {
+		return 0;
 	}
 }

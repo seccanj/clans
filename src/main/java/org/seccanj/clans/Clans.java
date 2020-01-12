@@ -237,16 +237,13 @@ public class Clans extends GameApplication {
                 	Individual individual = (Individual) event.getMatch().getObjects().get(0);
                 	Entity e = individuals.get(individual.getName());
                 	e.translate(Hexagons.getActualX(individual.getPosition()) - e.getX(), Hexagons.getActualY(individual.getPosition()) - e.getY());
-                } else if (event.getMatch().getRule().getName().equalsIgnoreCase("Eat plant")) {
-                	System.out.println("Matching 'Eat plant'");
+                	
+                } else if (event.getMatch().getRule().getName().equalsIgnoreCase("Eat plant") || 
+                		event.getMatch().getRule().getName().equalsIgnoreCase("Eat poisoned plant")) {
+                	System.out.println("Matching 'Eat plant' or 'Eat poisoned plant'");
 
                 	Plant plant = (Plant) event.getMatch().getObjects().get(2);
-                	Entity e = plants.remove(plant.getName());
-                	if (e != null) {
-                		e.removeFromWorld();
-                	} else {
-                		System.err.println("Plant '"+plant.getName()+"' not found!");
-                	}
+                	removeBeingFromContext(plant);
                 }
             }
         });

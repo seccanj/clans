@@ -3,6 +3,8 @@ package org.seccanj.clans.model.being;
 import java.util.Set;
 
 import org.seccanj.clans.model.State;
+import org.seccanj.clans.model.control.ActionDone;
+import org.seccanj.clans.model.control.ActionLog;
 import org.seccanj.clans.model.dna.Dna;
 import org.seccanj.clans.model.movement.Direction;
 import org.seccanj.clans.model.movement.Position;
@@ -64,4 +66,11 @@ public interface Being {
 	void setEnergy(double energy);
 	double getEnergy();
 	void setName(String name);
+	ActionLog getActionLog();
+	void setActionLog(ActionLog actionLog);
+	void setCharacteristics(Set<String> characteristics);
+	Set<String> getCharacteristics();
+	boolean hasCharacteristics(String... chars);
+	void addCharacteristics(String... characteristics);
+	ActionDone getLastActionDone();
 }

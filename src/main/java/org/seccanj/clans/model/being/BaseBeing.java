@@ -6,10 +6,12 @@ import java.util.Set;
 
 import org.seccanj.clans.model.State;
 import org.seccanj.clans.model.World;
+import org.seccanj.clans.model.control.ActionDone;
+import org.seccanj.clans.model.control.ActionLog;
 import org.seccanj.clans.model.dna.Dna;
 import org.seccanj.clans.model.movement.Direction;
-import org.seccanj.clans.model.movement.Position;
 import org.seccanj.clans.model.movement.Direction.Directions;
+import org.seccanj.clans.model.movement.Position;
 import org.seccanj.clans.util.Utils;
 
 public abstract class BaseBeing implements Being {
@@ -38,6 +40,9 @@ public abstract class BaseBeing implements Being {
 
 	public double maxSightDistance;
 	public double sightDistance;
+	
+	private Set<String> characteristics = new HashSet<>();
+	private ActionLog actionLog = new ActionLog();
 	
 	public BaseBeing(Dna dna) {
 		this.dna = dna;
@@ -164,8 +169,6 @@ public abstract class BaseBeing implements Being {
 			.map(n -> State.valueOf(n))
 			.allMatch(s -> states.contains(s));
 	}
-
-	
 	
 	@Override
 	public void addState(String state) {
@@ -220,6 +223,8 @@ public abstract class BaseBeing implements Being {
 		if (targetDistance < distance) {
 			distance = 2;
 		}
+		
+		getActionLog().add(new ActionDone(this, "move"));
 		
 		return move(distance);
 	}
@@ -372,8 +377,45 @@ public abstract class BaseBeing implements Being {
 	}
 
 	@Override
+	public ActionLog getActionLog() {
+		return actionLog;
+	}
+
+	@Override
+	public void setActionLog(ActionLog actionLog) {
+		this.actionLog = actionLog;
+	}
+
+	@Override
+	public ActionDone getLastActionDone() {
+		return actionLog.get(actionLog.size() - 1);
+	}
+	
+	@Override
+	public Set<String> getCharacteristics() {
+		return characteristics;
+	}
+
+	@Override
+	public void setCharacteristics(Set<String> characteristics) {
+		this.characteristics = characteristics;
+	}
+
+	@Override
+	public void addCharacteristics(String... characteristics) {
+		this.characteristics.addAll(Arrays.asList(characteristics));
+	}
+	
+	@Override
+	public boolean hasCharacteristics(String... chars) {
+		return Arrays.stream(chars)
+			.allMatch(c -> characteristics.contains(c));
+	}
+	
+	@Override
 	public String toString() {
 		//Gson gson = new Gson();
 		return getName(); //gson.toJson(this);
 	}
+
 }
