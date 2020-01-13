@@ -43,7 +43,7 @@ Steps:
 1. Launch Eclipse
 1. Define a User Library with the JFX JARs in it:
    1. In Eclipse, go to Windows -> Settings -> Java -> Build Path -> User Libraries
-   1. Click "New..." a,d give the library a name such as "JFX13", then "OK"
+   1. Click "New..." and give the library a name such as "JFX13", then "OK"
    1. With the library selected in the content pane, click "Add external JARs..."
    1. Navigate to the folder where you have extracted the JFX SDK and to the "lib" sub-folder.
    1. Select all the JARs there contained (not the sub-folders), then click "Open".
