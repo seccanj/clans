@@ -61,11 +61,11 @@ Steps:
    1. Click on "Apply and run"
 
 ## References
-*[1]: Drools: https://www.drools.org
-*[2]: JFX: https://openjfx.io
-*[3]: FXGL: https://github.com/AlmasB/FXGL
-*[4]: Maven: https://maven.apache.org
-*[5]: Java 13: https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html
-*[6]: Eclipse IDE for Enterprise Java Developers: https://www.eclipse.org/downloads/packages/
-*[7]: TilesFx: https://github.com/HanSolo/tilesfx
-*[8]: On how to clone a Github repository and add it to Eclipse, for example follow [this tutorial](https://github.com/collab-uniba/socialcde4eclipse/wiki/How-to-import-a-GitHub-project-into-Eclipse)
+* [1]: Drools: https://www.drools.org
+* [2]: JFX: https://openjfx.io
+* [3]: FXGL: https://github.com/AlmasB/FXGL
+* [4]: Maven: https://maven.apache.org
+* [5]: Java 13: https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html
+* [6]: Eclipse IDE for Enterprise Java Developers: https://www.eclipse.org/downloads/packages/
+* [7]: TilesFx: https://github.com/HanSolo/tilesfx
+* [8]: On how to clone a Github repository and add it to Eclipse, for example follow [this tutorial](https://github.com/collab-uniba/socialcde4eclipse/wiki/How-to-import-a-GitHub-project-into-Eclipse)
