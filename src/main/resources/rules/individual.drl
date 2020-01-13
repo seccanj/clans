@@ -284,7 +284,7 @@ rule "Learn" salience 30
 
 		insert(	new Experience( false, $individual, "eat", $cause.getCharacteristics() ) );
 
-		insert(	new ActionDone( $individual, "mating" ) );
+		insert(	new ActionDone( $individual, "learn" ) );
 
 end
 
