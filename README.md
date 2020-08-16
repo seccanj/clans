@@ -7,7 +7,7 @@ The aim of Clans is to experiment with a rule engine to achieve some sort of "ar
 
 Current elements of Clans are:
 - Individuals: the main characters, individuals live in a world also populated by plants. Individuals are governed by basic instincts, like hunger and the impulse to mate and generate children. They are DNA-based, with characteristics that are passed down to the progeny, make experiences and can learn from their mistakes.
-- Plants: plants represent food and the main source of energy for individuals. They can also represent a threat, in the case of poisonous plants.
+- Plants: plants represent food and the main source of energy for individuals. They can also represent a threat, in the case of poisonous plants. Individuals eating poisonous plnts, if they survive, autonomously learn how to avoid eating them again, and pass this experience to their children.
 
 The FXGL[3] game development framework is used to simplify JFX development.
 Also the TilesFX[7] library for dashboard elements is used to provide gauges on what's going on inside the Clans world.
