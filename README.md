@@ -12,6 +12,17 @@ Current elements of Clans are:
 The FXGL[3] game development framework is used to simplify JFX development.
 Also the TilesFX[7] library for dashboard elements is used to provide gauges on what's going on inside the Clans world.
 
+[![Video - Clans - Start of the simulation](https://github.com/seccanj/clans/blob/master/clans01.png?raw=true)](https://www.youtube.com/watch?v=FIYKUZgSL3w "Clans - Start of the simulation")
+
+[![Video - Clans - The community is growing](https://github.com/seccanj/clans/blob/master/clans02.png?raw=true)](https://www.youtube.com/watch?v=UONtoVZEKnA "Clans - The community is growing")
+
+Red dots are individuals, looking for food, feeding themselves, looking for partners, mating and generating new individuals.
+Each individual has a set of unique characteristics, such as endurance, length of sight, and so on, codified in its genes.
+Newborns share half of the DNA of each parent, and can go through subtle mutations, which slightly alter each ability parameters.
+
+Green dots are plants. They are the only edible resource for individuals.
+Plants split at a constant rate.
+
 ## Build environment setup
 The Clans project can be easily developed in the Eclipse IDE[6] and built with Maven[4].
 
